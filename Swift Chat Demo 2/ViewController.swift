@@ -3,23 +3,40 @@
 //  Swift Chat Demo 2
 //
 //  Created by Zachary on 25/9/2017.
-//  Copyright © 2017 USThing. All rights reserved.
+//  Copyright © 2017 Skygear. All rights reserved.
 //
 
-import UIKit
+import SKYKitChat
+import SVProgressHUD
 
-class ViewController: UIViewController {
+class ViewController: SKYChatConversationViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        self.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
 
+// MARK: - SKYChatConversationViewControllerDelegate
+
+extension ViewController: SKYChatConversationViewControllerDelegate {
+    func conversationViewController(_ controller: SKYChatConversationViewController,
+                                    didFetchedParticipants participants: [SKYRecord]) {
+        
+        ChatHelper.shared.cacheUserRecords(participants)
+    }
+    
+    func conversationViewController(_ controller: SKYChatConversationViewController, didFetchedMessages messages: [SKYMessage]) {
+        SVProgressHUD.dismiss()
+    }
+    
+    func startFetchingMessages(_ controller: SKYChatConversationViewController) {
+        SVProgressHUD.show()
+    }
+    
+}
