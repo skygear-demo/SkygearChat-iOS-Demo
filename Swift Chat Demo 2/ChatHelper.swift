@@ -55,6 +55,14 @@ class ChatHelper: NSObject {
         }
         return records
     }
+    
+    func fetchAllUsersRecord() -> [SKYRecord]{
+        var records:[SKYRecord] = []
+        for record in self.userRecords {
+            records.append(record.value)
+        }
+        return records
+    }
 
     func fetchCurrentUserRecord(completion: ((_ userRecord: SKYRecord?) -> Void)?) {
         if !isLoggedIn {

@@ -14,9 +14,14 @@ let LoggedInSegueIdentifier:String = "LoggedIn"
 
 class LandingViewController: UIViewController {
     
+    @IBOutlet weak var logoImageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.perform(#selector(self.navigateToNextPage), with: nil, afterDelay: 1)
+        UIView.animate(withDuration: 1, delay: 0, options: [.curveEaseInOut], animations: {
+            self.logoImageView.alpha = 1
+        }) { (completion) in
+            self.navigateToNextPage()
+        }
     }
 
     override func didReceiveMemoryWarning() {

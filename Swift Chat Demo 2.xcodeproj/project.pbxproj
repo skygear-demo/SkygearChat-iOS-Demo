@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		80530B9FBEBD52312E586B3D /* Pods_Swift_Chat_Demo_2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A451AA6B158B450E098C0F19 /* Pods_Swift_Chat_Demo_2.framework */; };
+		B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */; };
+		B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19CF1F7D0BB30078D053 /* Utilities.swift */; };
+		B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */; };
+		B61C19D41F8141350078D053 /* CreateGroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */; };
 		B62AE4C01F7900ED00395EB4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */; };
 		B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4C11F7900ED00395EB4 /* ViewController.swift */; };
 		B62AE4C51F7900ED00395EB4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C31F7900ED00395EB4 /* Main.storyboard */; };
@@ -18,6 +22,7 @@
 		B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */; };
 		B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */; };
 		B62AE4DA1F7A123E00395EB4 /* ConversationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */; };
+		B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65631001F7CD7FC00A07995 /* UsersListViewController.swift */; };
 		B6CCB3981F7A50AB009B2A7F /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */; };
 		B6CCB39A1F7A5502009B2A7F /* LoginRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */; };
 		B6CCB39C1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */; };
@@ -28,6 +33,10 @@
 		09D3355B195F881173AD7C0F /* Pods-Swift Chat Demo 2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swift Chat Demo 2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Swift Chat Demo 2/Pods-Swift Chat Demo 2.debug.xcconfig"; sourceTree = "<group>"; };
 		26D03EB7DD24CC71FAF6D1C6 /* Pods-Swift Chat Demo 2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swift Chat Demo 2.release.xcconfig"; path = "Pods/Target Support Files/Pods-Swift Chat Demo 2/Pods-Swift Chat Demo 2.release.xcconfig"; sourceTree = "<group>"; };
 		A451AA6B158B450E098C0F19 /* Pods_Swift_Chat_Demo_2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swift_Chat_Demo_2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListTableViewCell.swift; sourceTree = "<group>"; };
+		B61C19CF1F7D0BB30078D053 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKYQueryHelper.swift; sourceTree = "<group>"; };
+		B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewController.swift; sourceTree = "<group>"; };
 		B62AE4BC1F7900ED00395EB4 /* Swift Chat Demo 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swift Chat Demo 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B62AE4C11F7900ED00395EB4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -40,6 +49,7 @@
 		B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKYRecordExtension.swift; sourceTree = "<group>"; };
 		B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewController.swift; sourceTree = "<group>"; };
 		B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTableViewCell.swift; sourceTree = "<group>"; };
+		B65631001F7CD7FC00A07995 /* UsersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewController.swift; sourceTree = "<group>"; };
 		B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationViewController.swift; sourceTree = "<group>"; };
 		B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationTableViewCell.swift; sourceTree = "<group>"; };
@@ -97,10 +107,15 @@
 			isa = PBXGroup;
 			children = (
 				B62AE4D11F7907D900395EB4 /* ChatHelper.swift */,
+				B61C19CF1F7D0BB30078D053 /* Utilities.swift */,
+				B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */,
+				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
 				B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */,
 				B62AE4C11F7900ED00395EB4 /* ViewController.swift */,
-				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
 				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
+				B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */,
+				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
+				B65631001F7CD7FC00A07995 /* UsersListViewController.swift */,
 				B6CCB39D1F7A6373009B2A7F /* LandingViewController.swift */,
 				B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */,
 				B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */,
@@ -259,10 +274,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CCB39C1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift in Sources */,
+				B61C19D41F8141350078D053 /* CreateGroupConversationViewController.swift in Sources */,
+				B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */,
+				B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */,
 				B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */,
 				B6CCB39E1F7A6373009B2A7F /* LandingViewController.swift in Sources */,
 				B62AE4D41F79082000395EB4 /* TestHomepageViewController.swift in Sources */,
 				B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */,
+				B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */,
+				B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */,
 				B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */,
 				B6CCB3981F7A50AB009B2A7F /* StartupViewController.swift in Sources */,
 				B6CCB39A1F7A5502009B2A7F /* LoginRegistrationViewController.swift in Sources */,

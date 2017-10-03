@@ -15,29 +15,54 @@ import AFDateHelper
 
 let ConversationCellIdentifier:String = "Conversation"
 let ConversationViewSegueIdentifier:String = "ConversationView"
+let UserListSegueIdentifier:String = "NewMessage"
 
 class ConversationListViewController: UIViewController {
 
     @IBOutlet weak var conversationlistTableView: UITableView!
     @IBOutlet weak var conversationSearchBar: UISearchBar!
     
+    var refreshControl:UIRefreshControl!
+    var selectedConversation:SKYConversation? = nil
     var conversations:[SKYConversation]? = nil
     var cachedConversations:[SKYConversation]? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.isHidden = false
+        self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        self.refreshControl?.addTarget(self, action: #selector(handleRefresh), for: UIControlEvents.valueChanged)
+        self.conversationlistTableView.addSubview(refreshControl);
+        self.refreshControl.beginRefreshing()
+        self.handleRefresh(refreshControl: self.refreshControl)
+        
+        // For removing extra cells in the bottom of the tableView
+        self.conversationlistTableView.tableFooterView = UIView()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         SVProgressHUD.show()
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
-        // For removing extra cells in the bottom of the tableView
-        self.conversationlistTableView.tableFooterView = UIView()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func handleRefresh(refreshControl: UIRefreshControl) {
+        SVProgressHUD.show()
+        self.fetchConversations(successBlock: {
+            print("Fetched Conversations")
+            refreshControl.endRefreshing()
+        }) { (error) in
+            SVProgressHUD.showError(withStatus: error.localizedDescription)
+        }
     }
     
     func fetchConversations(successBlock: @escaping (()->Void), failureBlock: @escaping ((Error)->Void)) {
@@ -78,7 +103,11 @@ class ConversationListViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ConversationViewSegueIdentifier {
             let vc = segue.destination as! ViewController
-            vc.conversation = self.conversations![self.conversationlistTableView.indexPathForSelectedRow!.row]
+            vc.conversation = self.selectedConversation
+        }else if segue.identifier == UserListSegueIdentifier {
+            let destinationNavigationController = segue.destination as! UINavigationController
+            let vc = destinationNavigationController.topViewController as! UsersListViewController
+            vc.delegate = self
         }
     }
 }
@@ -89,6 +118,7 @@ extension ConversationListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedConversation = self.conversations?[indexPath.row]
         self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -134,14 +164,11 @@ extension ConversationListViewController: UITableViewDataSource {
             let conversation = conversations[indexPath.row]
             
             let conversationTitle = conversation.title ?? ""
-            let conversationInitials = conversationTitle.components(separatedBy: " ").reduce("") {
-                ($0 == "" ? "" : "\($0.characters.first!)") + "\($1.characters.first!)"
-            }
+            let conversationInitials = Utilities.getInitials(withString: conversationTitle)
             let conversationLastMessage = conversation.lastMessage?.body
-            let avatarColor = [UIColor.jsq_messageBubbleRed(), UIColor.jsq_messageBubbleBlue(), UIColor.jsq_messageBubbleGreen(), UIColor.jsq_messageBubbleLightGray()]
-            let avatar = JSQMessagesAvatarImageFactory.avatarImage(withUserInitials: conversationInitials, backgroundColor: avatarColor[indexPath.row % 4], textColor: UIColor.white, font: UIFont.systemFont(ofSize: 14), diameter: 50)
+            let avatar = Utilities.avatarImage(withString: conversationInitials, color: Utilities.avatarColor(number: indexPath.row % 4), diameter: 50)
             
-            conversationCell.avatarImageView.image = avatar?.avatarImage
+            conversationCell.avatarImageView.image = avatar
             conversationCell.conversationNameLabel.text = conversationTitle
             conversationCell.messageLabel.text = conversationLastMessage ?? ""
             conversationCell.lastMessageTimeLabel.text = conversationLastUpdateDateString(conversation: conversation)
@@ -185,5 +212,12 @@ extension ConversationListViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         searchBar.text = ""
         resetConversationList()
+    }
+}
+
+extension ConversationListViewController: UsersListViewControllerDelegate {
+    func userlistViewController(didFinish conversation: SKYConversation) {
+        self.selectedConversation = conversation
+        self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
     }
 }
