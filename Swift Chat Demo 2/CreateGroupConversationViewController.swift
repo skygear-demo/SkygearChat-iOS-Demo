@@ -35,7 +35,7 @@ class CreateGroupConversationViewController: UIViewController {
     }
     
     @IBAction func donePressed(_ sender: UIBarButtonItem) {
-        if conversationNameTextField.text?.count == 0 {
+        if conversationNameTextField.text?.characters.count == 0 {
             SVProgressHUD.showError(withStatus: "Please enter a conversation name.")
             SVProgressHUD.dismiss(withDelay: 1)
         }else {
