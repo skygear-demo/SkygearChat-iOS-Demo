@@ -12,7 +12,9 @@ import SKYKitChat
 import SVProgressHUD
 
 let UsersListTableViewCellIdentifier:String = "User"
-let CreateGroupConversationViewControllerIdentifier:String = "group"
+let CreateGroupConversationViewControllerSegueIdentifier:String = "group"
+let ChangeToGroupSelectionSegueIdentifier:String = "groupconversation"
+
 
 protocol UsersListViewControllerDelegate: class {
     func userlistViewController(didFinish conversation: SKYConversation)
@@ -26,10 +28,13 @@ class UsersListViewController: UIViewController {
     var delegate: UsersListViewControllerDelegate?
     var users: [SKYRecord] = []
     var selectedUsers: [SKYRecord] = []
-    
+    var groupSelection:Bool = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.performUserQuery()
+
+        self.tableView.allowsMultipleSelection = groupSelection
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,10 +44,10 @@ class UsersListViewController: UIViewController {
     @IBAction func donePressed(_ sender: Any) {
         if let selectedRow = self.tableView.indexPathsForSelectedRows {
             if selectedRow.count > 1 {
-                self.performSegue(withIdentifier: CreateGroupConversationViewControllerIdentifier, sender: self)
+                self.performSegue(withIdentifier: CreateGroupConversationViewControllerSegueIdentifier, sender: self)
                 return
             }else if selectedRow.count == 1{
-                let selectedUser:SKYRecord = self.users[selectedRow[0].row]
+                let selectedUser:SKYRecord = self.selectedUsers[0]
                 SVProgressHUD.show()
                 SKYContainer.default().chatExtension?.createDirectConversation(userID: selectedUser.recordID.recordName, title: selectedUser["username"] as? String, metadata: nil, completion: { (conversation, error) in
                     SVProgressHUD.dismiss()
@@ -80,25 +85,46 @@ class UsersListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == CreateGroupConversationViewControllerIdentifier {
+        if segue.identifier == CreateGroupConversationViewControllerSegueIdentifier {
             let vc = segue.destination as! CreateGroupConversationViewController
             vc.selectedUsers = self.selectedUsers
             vc.delegate = self.delegate
+        }else if segue.identifier == ChangeToGroupSelectionSegueIdentifier {
+            let vc = segue.destination as! UsersListViewController
+            vc.groupSelection = true
         }
     }
 }
 
 extension UsersListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedUsers.append(self.users[indexPath.row])
-        tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCellAccessoryType.checkmark
+        if groupSelection == true {
+            self.selectedUsers.append(self.users[indexPath.row])
+            tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCellAccessoryType.checkmark
+        } else {
+            if indexPath.row != 0 {
+                self.selectedUsers = [self.users[indexPath.row - 1]]
+                let section = indexPath.section
+                let numberOfRows = tableView.numberOfRows(inSection: section)
+                for row in 0..<numberOfRows {
+                    if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
+                        cell.accessoryType = row == indexPath.row ? .checkmark : .none
+                    }
+                }
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if let index = self.selectedUsers.index(of: self.users[indexPath.row]) {
-            self.selectedUsers.remove(at: index)
+        if groupSelection == true {
+            if let index = self.selectedUsers.index(of: self.users[indexPath.row]) {
+                self.selectedUsers.remove(at: index)
+            }
+        }else {
+            self.selectedUsers = []
         }
         tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCellAccessoryType.none
+
     }
 }
 
@@ -109,18 +135,40 @@ extension UsersListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.users.count
+        if groupSelection == true {
+            return self.users.count
+        }else {
+            return self.users.count + 1
+        }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UsersListTableViewCellIdentifier) as! UsersListTableViewCell
-        let user = self.users[indexPath.row]
+    func configureCell(cell: UsersListTableViewCell, indexPath: IndexPath) -> UsersListTableViewCell {
+        var user:SKYRecord
+        if groupSelection == true {
+            user = self.users[indexPath.row]
+        }else {
+            user = self.users[indexPath.row - 1]
+        }
         let username = user["username"] as? String
         if let username = username {
             cell.usernameLabel.text = username
             cell.userAvatarImageView.image = Utilities.avatarImage(withString: Utilities.getInitials(withString: username), color: Utilities.avatarColor(number: indexPath.row % 4), diameter: 28)
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if groupSelection == true {
+            let cell = tableView.dequeueReusableCell(withIdentifier: UsersListTableViewCellIdentifier) as! UsersListTableViewCell
+            return configureCell(cell: cell, indexPath: indexPath)
+        } else {
+            if indexPath.row == 0 {
+                return tableView.dequeueReusableCell(withIdentifier: "groupconversation")!
+            }else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: UsersListTableViewCellIdentifier) as! UsersListTableViewCell
+                return configureCell(cell: cell, indexPath: indexPath)
+            }
+        }
     }
 }
 
