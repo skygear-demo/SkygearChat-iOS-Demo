@@ -12,6 +12,8 @@ import SKYKitChat
 import JSQMessagesViewController
 import SVProgressHUD
 import AFDateHelper
+import DZNEmptyDataSet
+
 
 let ConversationCellIdentifier:String = "Conversation"
 let ConversationViewSegueIdentifier:String = "ConversationView"
@@ -37,6 +39,9 @@ class ConversationListViewController: UIViewController {
         self.conversationlistTableView.addSubview(refreshControl);
         self.refreshControl.beginRefreshing()
         self.handleRefresh(refreshControl: self.refreshControl)
+        
+        self.conversationlistTableView.emptyDataSetDelegate = self
+        self.conversationlistTableView.emptyDataSetSource = self
         
         // For removing extra cells in the bottom of the tableView
         self.conversationlistTableView.tableFooterView = UIView()
@@ -219,5 +224,30 @@ extension ConversationListViewController: UsersListViewControllerDelegate {
     func userlistViewController(didFinish conversation: SKYConversation) {
         self.selectedConversation = conversation
         self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
+    }
+}
+
+extension ConversationListViewController: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return UIImage(named: "icon-conversation")
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let title = NSAttributedString(string: "No Conversations")
+        return title
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        let font = UIFont.systemFont(ofSize: 12)
+        let attrsDictionary = [NSFontAttributeName:font]
+        let description = NSAttributedString(string: "You don't have any conversations at this moment. Create one now! Click the button on the upper right hand corner.", attributes: attrsDictionary)
+        return description
+    }
+    
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        if let navigationBar = navigationController?.navigationBar {
+            return -navigationBar.frame.height * 0.75
+        }
+        return 0
     }
 }

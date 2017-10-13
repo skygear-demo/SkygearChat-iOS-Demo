@@ -13,4 +13,5 @@ target 'Swift Chat Demo 2' do
   pod 'SKYKitChat', :git => 'https://github.com/SkygearIO/chat-SDK-iOS.git', :commit => '921d18e'
   pod 'SKYKitChat/UI', :git => 'https://github.com/SkygearIO/chat-SDK-iOS.git', :commit => '921d18e'
   pod 'AFDateHelper', '~> 4.2.2'
+  pod 'DZNEmptyDataSet'
 end
