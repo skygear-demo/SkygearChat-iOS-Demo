@@ -72,6 +72,29 @@
                                             <outlet property="usernameLabel" destination="gLL-CR-5av" id="xgI-k6-ANv"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="groupconversation" id="dJw-SJ-xCg">
+                                        <rect key="frame" x="0.0" y="128" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="dJw-SJ-xCg" id="tEy-Ad-pDq">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Group Conversation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qti-wk-G3D">
+                                                    <rect key="frame" x="20" y="11.999999999999998" width="181.33333333333334" height="19.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="qti-wk-G3D" firstAttribute="leading" secondItem="tEy-Ad-pDq" secondAttribute="leadingMargin" constant="12" id="6FR-xm-gVY"/>
+                                                <constraint firstItem="qti-wk-G3D" firstAttribute="centerY" secondItem="tEy-Ad-pDq" secondAttribute="centerY" id="muW-Sc-fky"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="7ZU-fR-5DE" kind="show" identifier="groupconversation" id="hTF-cG-Ebj"/>
+                                        </connections>
+                                    </tableViewCell>
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="7ZU-fR-5DE" id="DH3-bB-lPV"/>
