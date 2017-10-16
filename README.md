@@ -1,33 +1,46 @@
 # Skygear Chat iOS Demo
 
-This iOS Demo is written in Swift and powered by Skygear and Skygear Chat plugin.
+This iOS Demo is written in Swift and is powered by [Skygear](https://skygear.io) and [Skygear Chat](https://skygear.io/chat). 
 
 ## Skygear Introduction
+[Skygear](https://github.com/skygeario) is an open source back-end-as-a-service that speeds up app development. [SkyChat](https://github.com/SkygearIO/chat) is a module under Skygear and has all the messaging features a chat app usually needs.
 
 ## Screenshot
 
 ## Features Demonstrated
-- [x] User login and registration
-- [x] Use of Skygear Chat UIKit
-	- [x] Load messages from conversations
-	- [x] Send text messages
-	- [ ] Send photo messages
-	- [ ] Send voice messages
-	- [ ] Edit messages
-	- [ ] Delete messages
-	- [x] Subscribe to new messages in a conversation
-	- [x] Message Receipt
-	- [x] Typing Indicator
-- [x] Create Direct Conversation
-- [x] Create Group Conversation
-- [x] Fetch Conversations
-- [x] Leaving Conversations
+
+### User athentication
+- [x] User sign up and login 
+- [ ] User logout
+
+### Conversation creation
+- [x] Create 1 to 1 conversation
+- [x] Create Group conversation
+
+### Conversation list
+- [x] Get all conversations of a users
+- [x] Show unread counts of a conversation
+
+### Conversation view (from UI kit)
+- [x] Load messages from conversations (chat history)
+- [x] Send text messages
+- [x] Message receipt status
+- [x] Typing indicator
+- [ ] Send photo messages
+- [ ] Send voice messages
+- [ ] Edit messages
+- [ ] Delete messages
+
+### Conversation setting
+- [ ] Leave Conversations
 - [ ] Add Users to Conversations
 - [ ] Remove Users from Conversations
 - [ ] Add admin
 - [ ] Remove admin
+
+### Notification
 - [ ] Push notification for new messages
-- [x] Message Unread Count
+- [ ] Mute conversation's notification
 
 ## Installation Guide
 
@@ -46,4 +59,4 @@ This iOS Demo is written in Swift and powered by Skygear and Skygear Chat plugin
 	```
 	pod install
 	```
-3. Run the app
+3. Open `Swift Chat Demo 2.xcworkspace`
