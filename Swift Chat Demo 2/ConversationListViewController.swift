@@ -173,9 +173,33 @@ extension ConversationListViewController: UITableViewDataSource {
             let avatar = Utilities.avatarImage(withString: conversationInitials, color: Utilities.avatarColor(number: indexPath.row % 4), diameter: 50)
             
             conversationCell.avatarImageView.image = avatar
-            conversationCell.conversationNameLabel.text = conversationTitle
             conversationCell.messageLabel.text = conversationLastMessage ?? ""
             conversationCell.lastMessageTimeLabel.text = conversationLastUpdateDateString(conversation: conversation)
+            
+            if conversation.participantIds.count == 2 {
+                var conversationTarget:String = ""
+                if conversation.participantIds[0] == SKYContainer.default().auth.currentUser?.recordID.recordName {
+                    conversationTarget = conversation.participantIds[1]
+                }else {
+                    conversationTarget = conversation.participantIds[0]
+                }
+                let userQuery = SKYQuery(recordType: "user", predicate: NSPredicate(format: "_id == %@", conversationTarget))
+                SKYContainer.default().publicCloudDatabase.perform(userQuery, completionHandler: { (results, error) in
+                    if let error = error {
+                        Utilities.handleQueryError(error: error as NSError)
+                        return
+                    }
+                    if let results = results {
+                        if results.count > 0 {
+                            let fetchedUser:SKYRecord = results[0] as! SKYRecord
+                            conversationCell.conversationNameLabel.text = fetchedUser["username"] as? String
+                        }
+                    }
+                })
+            }else {
+                conversationCell.conversationNameLabel.text = conversationTitle
+            }
+            
             if conversation.unreadCount < 0 {
                 conversationCell.unreadCountLabel.text = "\(conversation.unreadCount)"
                 conversationCell.unreadCountLabel.isHidden = false
