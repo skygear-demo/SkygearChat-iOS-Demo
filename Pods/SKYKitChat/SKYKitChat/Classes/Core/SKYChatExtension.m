@@ -1013,7 +1013,7 @@ NSString *const SKYChatRecordChangeUserInfoKey = @"recordChange";
                 usingBlock:^(NSNotification *_Nonnull note) {
                     SKYChatRecordChange *recordChange =
                         [note.userInfo objectForKey:SKYChatRecordChangeUserInfoKey];
-                    if (![recordChange.recordType isEqualToString:@"conversation"]) {
+                    if (![recordChange.recordType isEqualToString:@"conversation"]  && ![recordChange.recordType isEqualToString:@"message"]) {
                         return;
                     }
                     NSLog(@"Got conversation");
