@@ -16,9 +16,19 @@ class Utilities: NSObject {
     }
     
     static func getInitials(withString string:String) -> String {
-        return string.components(separatedBy: " ").reduce("") {
-            return ($0 == "" ? "" : "\($0.characters.first!)") + "\($1.characters.first!)"
+        var finalString = String()
+        var words = string.components(separatedBy: .whitespacesAndNewlines)
+        
+        if let firstCharacter = words.first?.characters.first {
+            finalString.append(String(firstCharacter))
+            words.removeFirst()
         }
+        
+        if let lastCharacter = words.last?.characters.first {
+            finalString.append(String(lastCharacter))
+        }
+        
+        return finalString.uppercased()
     }
     
     static func avatarColor(number: Int) -> UIColor{
