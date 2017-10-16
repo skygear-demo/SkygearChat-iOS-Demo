@@ -47,8 +47,7 @@ class ConversationListViewController: UIViewController {
         self.conversationlistTableView.tableFooterView = UIView()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        SVProgressHUD.show()
+    override func viewWillAppear(_ animated: Bool) {
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
