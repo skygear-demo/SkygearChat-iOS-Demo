@@ -28,6 +28,7 @@ class ConversationListViewController: UIViewController {
     var selectedConversation:SKYConversation? = nil
     var conversations:[SKYConversation]? = nil
     var cachedConversations:[SKYConversation]? = nil
+    var conversationChangeObserver: Any?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +54,14 @@ class ConversationListViewController: UIViewController {
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        subscribeConversationChanges()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        unsubscribeConversationChanges()
     }
 
     override func didReceiveMemoryWarning() {
@@ -101,6 +110,38 @@ class ConversationListViewController: UIViewController {
             return dateFormatter.string(from: modificationDate)
         }else {
             return ""
+        }
+    }
+    
+    func subscribeConversationChanges() {
+        
+        self.unsubscribeConversationChanges()
+        
+        let handler: ((SKYChatRecordChangeEvent, SKYConversation) -> Void) = {(event, msg) in
+            switch event {
+            case .create:
+                NSLog("Conversation create")
+            case .update:
+                NSLog("Conversation update")
+            case .delete:
+                NSLog("Conversation delete")
+            }
+            self.fetchConversations(successBlock: {
+                print("Fetched Conversations")
+                print("Conversation: \(msg.title)")
+            }) { (error) in
+                SVProgressHUD.showError(withStatus: error.localizedDescription)
+            }
+        }
+        self.conversationChangeObserver = SKYContainer.default().chatExtension?
+            .subscribeToConversation(handler: handler)
+        
+    }
+    
+    func unsubscribeConversationChanges() {
+        if let observer = self.conversationChangeObserver {
+            SKYContainer.default().chatExtension?.unsubscribeToConversation(withObserver: observer)
+            self.conversationChangeObserver = nil
         }
     }
     
