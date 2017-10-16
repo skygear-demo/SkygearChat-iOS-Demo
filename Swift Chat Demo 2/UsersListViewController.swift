@@ -68,7 +68,7 @@ class UsersListViewController: UIViewController {
     }
     
     func performUserQuery() {
-        let query = SKYQuery(recordType: "user", predicate: nil)
+        let query = SKYQuery(recordType: "user", predicate: NSPredicate(format: "username != nil"))
         let sortDescriptor = NSSortDescriptor(key: "username", ascending: true)
         query.sortDescriptors = [sortDescriptor]
         SKYQueryHelper.performQuery(query: query) { (results) in
