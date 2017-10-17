@@ -13,7 +13,6 @@
 		B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */; };
 		B61C19D41F8141350078D053 /* CreateGroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */; };
 		B62AE4C01F7900ED00395EB4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */; };
-		B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4C11F7900ED00395EB4 /* ViewController.swift */; };
 		B62AE4C51F7900ED00395EB4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C31F7900ED00395EB4 /* Main.storyboard */; };
 		B62AE4C71F7900ED00395EB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C61F7900ED00395EB4 /* Assets.xcassets */; };
 		B62AE4CA1F7900ED00395EB4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C81F7900ED00395EB4 /* LaunchScreen.storyboard */; };
@@ -39,7 +38,6 @@
 		B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewController.swift; sourceTree = "<group>"; };
 		B62AE4BC1F7900ED00395EB4 /* Swift Chat Demo 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swift Chat Demo 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B62AE4C11F7900ED00395EB4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B62AE4C41F7900ED00395EB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B62AE4C61F7900ED00395EB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B62AE4C91F7900ED00395EB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -111,7 +109,6 @@
 				B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */,
 				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
 				B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */,
-				B62AE4C11F7900ED00395EB4 /* ViewController.swift */,
 				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
 				B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */,
 				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
@@ -282,7 +279,6 @@
 				B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */,
 				B6CCB39E1F7A6373009B2A7F /* LandingViewController.swift in Sources */,
 				B62AE4D41F79082000395EB4 /* TestHomepageViewController.swift in Sources */,
-				B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */,
 				B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */,
 				B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */,
 				B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */,

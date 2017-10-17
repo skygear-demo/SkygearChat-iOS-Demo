@@ -30,12 +30,7 @@ class TestHomepageViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "chatroom" {
-            let vc:ViewController = segue.destination as! ViewController
-            if let conversation = self.conversation {
-                vc.conversation = conversation
-            }
-        }
+        
     }
     
     @IBAction func nextPage(_ sender: Any) {

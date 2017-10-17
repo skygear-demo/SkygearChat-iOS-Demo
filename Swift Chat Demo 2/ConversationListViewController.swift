@@ -25,7 +25,6 @@ class ConversationListViewController: UIViewController {
     @IBOutlet weak var conversationSearchBar: UISearchBar!
     
     var refreshControl:UIRefreshControl!
-    var selectedConversation:SKYConversation? = nil
     var conversations:[SKYConversation]? = nil
     var cachedConversations:[SKYConversation]? = nil
     var conversationChangeObserver: Any?
@@ -146,10 +145,7 @@ class ConversationListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ConversationViewSegueIdentifier {
-            let vc = segue.destination as! ViewController
-            vc.conversation = self.selectedConversation
-        }else if segue.identifier == UserListSegueIdentifier {
+        if segue.identifier == UserListSegueIdentifier {
             let destinationNavigationController = segue.destination as! UINavigationController
             let vc = destinationNavigationController.topViewController as! UsersListViewController
             vc.delegate = self
@@ -163,8 +159,9 @@ extension ConversationListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedConversation = self.conversations?[indexPath.row]
-        self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
+        let vc = SKYChatConversationViewController()
+        vc.conversation = self.conversations?[indexPath.row]
+        self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -286,8 +283,9 @@ extension ConversationListViewController: UISearchBarDelegate {
 
 extension ConversationListViewController: UsersListViewControllerDelegate {
     func userlistViewController(didFinish conversation: SKYConversation) {
-        self.selectedConversation = conversation
-        self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
+        let vc = SKYChatConversationViewController()
+        vc.conversation = conversation
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
