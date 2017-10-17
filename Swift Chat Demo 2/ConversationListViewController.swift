@@ -159,7 +159,7 @@ extension ConversationListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = ViewController()
+        let vc = SKYChatConversationViewController()
         vc.conversation = self.conversations?[indexPath.row]
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
@@ -283,7 +283,7 @@ extension ConversationListViewController: UISearchBarDelegate {
 
 extension ConversationListViewController: UsersListViewControllerDelegate {
     func userlistViewController(didFinish conversation: SKYConversation) {
-        let vc = ViewController()
+        let vc = SKYChatConversationViewController()
         vc.conversation = conversation
         self.navigationController?.pushViewController(vc, animated: true)
     }
