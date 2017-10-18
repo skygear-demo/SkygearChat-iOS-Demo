@@ -28,7 +28,6 @@ class ConversationListViewController: UIViewController {
     var selectedConversation:SKYConversation? = nil
     var conversations:[SKYConversation]? = nil
     var cachedConversations:[SKYConversation]? = nil
-    var conversationChangeObserver: Any?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,11 +56,11 @@ class ConversationListViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        subscribeConversationChanges()
+        subscribeUserChannel()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        unsubscribeConversationChanges()
+        unsubscribeUserChannel()
     }
 
     override func didReceiveMemoryWarning() {
@@ -75,6 +74,25 @@ class ConversationListViewController: UIViewController {
             refreshControl.endRefreshing()
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
+        }
+    }
+    
+    func fetchConversation(conversation: SKYConversation, successBlock: @escaping (()->Void), failureBlock: @escaping ((Error)->Void)) {
+        SKYContainer.default().chatExtension?.fetchConversation(conversationID: conversation.recordID().recordName, fetchLastMessage: true, completion: { (conversation, error) in
+            if let conversation = conversation {
+                self.updateConversation(conversation: conversation)
+            }
+        })
+    }
+    
+    func updateConversation(conversation: SKYConversation) {
+        let updatedConversationIndex = self.conversations?.index(where: { (item) -> Bool in
+            item.recordName() == conversation.recordName()
+        })
+        if var conversations = self.conversations, let updatedConversationIndex = updatedConversationIndex {
+            self.conversations?.remove(at: updatedConversationIndex)
+            self.conversations?.insert(conversation, at: 0)
+            self.conversationlistTableView.reloadData()
         }
     }
     
@@ -113,36 +131,41 @@ class ConversationListViewController: UIViewController {
         }
     }
     
-    func subscribeConversationChanges() {
+    func subscribeUserChannel() {
         
-        self.unsubscribeConversationChanges()
+        self.unsubscribeUserChannel()
+        SKYContainer.default().chatExtension?.subscribeToUserChannelWithCompletion(completion: nil)
         
-        let handler: ((SKYChatRecordChangeEvent, SKYConversation) -> Void) = {(event, msg) in
-            switch event {
-            case .create:
-                NSLog("Conversation create")
-            case .update:
-                NSLog("Conversation update")
-            case .delete:
-                NSLog("Conversation delete")
+        NotificationCenter.default.addObserver(forName: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil, queue: OperationQueue.main) { (notification) in
+            if let r = notification.userInfo?["recordChange"] {
+                let recordChange = r as! SKYChatRecordChange
+                if recordChange.event == .create {
+//                    Will Change to this method (update certain conversation only) when fetchConversation last message bug is fixed
+//                    let record = recordChange.record
+//                    if record.recordType == "message" {
+//                        let conversationRef = record["conversation"] as! SKYReference
+//                        let conversationRecord = SKYRecord(recordType: "conversation", name: conversationRef.recordID.recordName)
+//                        let conversation = SKYConversation(recordData: conversationRecord)
+//                        self.fetchConversation(conversation: conversation, successBlock: {
+//
+//                        }, failureBlock: { (error) in
+//
+//                        })
+//                    }
+
+                }
             }
             self.fetchConversations(successBlock: {
                 print("Fetched Conversations")
-                print("Conversation: \(msg.title)")
             }) { (error) in
                 SVProgressHUD.showError(withStatus: error.localizedDescription)
             }
         }
-        self.conversationChangeObserver = SKYContainer.default().chatExtension?
-            .subscribeToConversation(handler: handler)
-        
     }
     
-    func unsubscribeConversationChanges() {
-        if let observer = self.conversationChangeObserver {
-            SKYContainer.default().chatExtension?.unsubscribeToConversation(withObserver: observer)
-            self.conversationChangeObserver = nil
-        }
+    func unsubscribeUserChannel() {
+        SKYContainer.default().chatExtension?.unsubscribeFromUserChannel()
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -224,24 +247,29 @@ extension ConversationListViewController: UITableViewDataSource {
                 }else {
                     conversationTarget = conversation.participantIds[0]
                 }
-                let userQuery = SKYQuery(recordType: "user", predicate: NSPredicate(format: "_id == %@", conversationTarget))
-                SKYContainer.default().publicCloudDatabase.perform(userQuery, completionHandler: { (results, error) in
-                    if let error = error {
-                        Utilities.handleQueryError(error: error as NSError)
-                        return
-                    }
-                    if let results = results {
-                        if results.count > 0 {
-                            let fetchedUser:SKYRecord = results[0] as! SKYRecord
-                            conversationCell.conversationNameLabel.text = fetchedUser["username"] as? String
+                
+                let targetUser = ChatHelper.shared.userRecord(userID: conversationTarget)
+                if let targetUser = targetUser {
+                    conversationCell.conversationNameLabel.text = targetUser["username"] as? String
+                }else {
+                    ChatHelper.shared.fetchUserRecords(userIDs: [conversationTarget], completion: { (results, error) in
+                        if let error = error {
+                            Utilities.handleQueryError(error: error as NSError)
+                            return
                         }
-                    }
-                })
+                        if let results = results {
+                            if results.count > 0 {
+                                let fetchedUser:SKYRecord = results[0]
+                                conversationCell.conversationNameLabel.text = fetchedUser["username"] as? String
+                            }
+                        }
+                    })
+                }
             }else {
                 conversationCell.conversationNameLabel.text = conversationTitle
             }
             
-            if conversation.unreadCount < 0 {
+            if conversation.unreadCount > 0 {
                 conversationCell.unreadCountLabel.text = "\(conversation.unreadCount)"
                 conversationCell.unreadCountLabel.isHidden = false
             }else {
