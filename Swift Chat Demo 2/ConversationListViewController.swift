@@ -147,7 +147,7 @@ class ConversationListViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ConversationViewSegueIdentifier {
-            let vc = segue.destination as! ViewController
+            let vc = segue.destination as! CustomSKYChatConversationViewController
             vc.conversation = self.selectedConversation
         }else if segue.identifier == UserListSegueIdentifier {
             let destinationNavigationController = segue.destination as! UINavigationController

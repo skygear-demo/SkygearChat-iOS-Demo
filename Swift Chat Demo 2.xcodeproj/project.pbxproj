@@ -13,16 +13,17 @@
 		B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */; };
 		B61C19D41F8141350078D053 /* CreateGroupConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */; };
 		B62AE4C01F7900ED00395EB4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */; };
-		B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4C11F7900ED00395EB4 /* ViewController.swift */; };
+		B62AE4C21F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */; };
 		B62AE4C51F7900ED00395EB4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C31F7900ED00395EB4 /* Main.storyboard */; };
 		B62AE4C71F7900ED00395EB4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C61F7900ED00395EB4 /* Assets.xcassets */; };
 		B62AE4CA1F7900ED00395EB4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B62AE4C81F7900ED00395EB4 /* LaunchScreen.storyboard */; };
 		B62AE4D21F7907D900395EB4 /* ChatHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D11F7907D900395EB4 /* ChatHelper.swift */; };
-		B62AE4D41F79082000395EB4 /* TestHomepageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D31F79082000395EB4 /* TestHomepageViewController.swift */; };
 		B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */; };
 		B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */; };
 		B62AE4DA1F7A123E00395EB4 /* ConversationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */; };
 		B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65631001F7CD7FC00A07995 /* UsersListViewController.swift */; };
+		B67D2E701F94803B002BF079 /* SettingUserInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D2E6F1F94803B002BF079 /* SettingUserInfoTableViewCell.swift */; };
+		B67D2E721F948053002BF079 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D2E711F948053002BF079 /* SettingViewController.swift */; };
 		B6CCB3981F7A50AB009B2A7F /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */; };
 		B6CCB39A1F7A5502009B2A7F /* LoginRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */; };
 		B6CCB39C1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */; };
@@ -39,17 +40,18 @@
 		B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupConversationViewController.swift; sourceTree = "<group>"; };
 		B62AE4BC1F7900ED00395EB4 /* Swift Chat Demo 2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Swift Chat Demo 2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B62AE4C11F7900ED00395EB4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSKYChatConversationViewController.swift; sourceTree = "<group>"; };
 		B62AE4C41F7900ED00395EB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B62AE4C61F7900ED00395EB4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B62AE4C91F7900ED00395EB4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B62AE4CB1F7900ED00395EB4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B62AE4D11F7907D900395EB4 /* ChatHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHelper.swift; sourceTree = "<group>"; };
-		B62AE4D31F79082000395EB4 /* TestHomepageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHomepageViewController.swift; sourceTree = "<group>"; };
 		B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKYRecordExtension.swift; sourceTree = "<group>"; };
 		B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewController.swift; sourceTree = "<group>"; };
 		B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTableViewCell.swift; sourceTree = "<group>"; };
 		B65631001F7CD7FC00A07995 /* UsersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewController.swift; sourceTree = "<group>"; };
+		B67D2E6F1F94803B002BF079 /* SettingUserInfoTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingUserInfoTableViewCell.swift; sourceTree = "<group>"; };
+		B67D2E711F948053002BF079 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationViewController.swift; sourceTree = "<group>"; };
 		B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationTableViewCell.swift; sourceTree = "<group>"; };
@@ -111,7 +113,7 @@
 				B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */,
 				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
 				B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */,
-				B62AE4C11F7900ED00395EB4 /* ViewController.swift */,
+				B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */,
 				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
 				B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */,
 				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
@@ -122,7 +124,8 @@
 				B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */,
 				B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */,
 				B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */,
-				B62AE4D31F79082000395EB4 /* TestHomepageViewController.swift */,
+				B67D2E6F1F94803B002BF079 /* SettingUserInfoTableViewCell.swift */,
+				B67D2E711F948053002BF079 /* SettingViewController.swift */,
 				B62AE4C61F7900ED00395EB4 /* Assets.xcassets */,
 				B62AE4C81F7900ED00395EB4 /* LaunchScreen.storyboard */,
 				B62AE4CB1F7900ED00395EB4 /* Info.plist */,
@@ -280,9 +283,10 @@
 				B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */,
 				B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */,
 				B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */,
+				B67D2E721F948053002BF079 /* SettingViewController.swift in Sources */,
 				B6CCB39E1F7A6373009B2A7F /* LandingViewController.swift in Sources */,
-				B62AE4D41F79082000395EB4 /* TestHomepageViewController.swift in Sources */,
-				B62AE4C21F7900ED00395EB4 /* ViewController.swift in Sources */,
+				B62AE4C21F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift in Sources */,
+				B67D2E701F94803B002BF079 /* SettingUserInfoTableViewCell.swift in Sources */,
 				B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */,
 				B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */,
 				B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */,

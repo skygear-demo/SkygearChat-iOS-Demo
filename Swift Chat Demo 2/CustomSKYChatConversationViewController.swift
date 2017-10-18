@@ -9,7 +9,7 @@
 import SKYKitChat
 import SVProgressHUD
 
-class ViewController: SKYChatConversationViewController {
+class CustomSKYChatConversationViewController: SKYChatConversationViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +24,7 @@ class ViewController: SKYChatConversationViewController {
 
 // MARK: - SKYChatConversationViewControllerDelegate
 
-extension ViewController: SKYChatConversationViewControllerDelegate {
+extension CustomSKYChatConversationViewController: SKYChatConversationViewControllerDelegate {
     func conversationViewController(_ controller: SKYChatConversationViewController,
                                     didFetchedParticipants participants: [SKYRecord]) {
         
