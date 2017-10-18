@@ -46,7 +46,7 @@ class UsersListViewController: UIViewController {
             if selectedRow.count > 1 {
                 self.performSegue(withIdentifier: CreateGroupConversationViewControllerSegueIdentifier, sender: self)
                 return
-            }else if selectedRow.count == 1{
+            }else if selectedRow.count == 1 && self.selectedUsers.count > 0{
                 let selectedUser:SKYRecord = self.selectedUsers[0]
                 SVProgressHUD.show()
                 SKYContainer.default().chatExtension?.createDirectConversation(userID: selectedUser.recordID.recordName, title: selectedUser["username"] as? String, metadata: nil, completion: { (conversation, error) in
