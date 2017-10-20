@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        self.skygear.configAddress("https://chatdemozachary.skygeario.com/")
-        self.skygear.configure(withAPIKey: "2abaeb26a050477d9ce059ad7bd72ba1")
+        self.skygear.configAddress("https://chatdemoapp.skygeario.com/")
+        self.skygear.configure(withAPIKey: "c0d796f60a9649d78ade26e65c460459")
         return true
     }
 
