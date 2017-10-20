@@ -169,10 +169,7 @@ class ConversationListViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ConversationViewSegueIdentifier {
-            let vc = segue.destination as! CustomSKYChatConversationViewController
-            vc.conversation = self.selectedConversation
-        }else if segue.identifier == UserListSegueIdentifier {
+        if segue.identifier == UserListSegueIdentifier {
             let destinationNavigationController = segue.destination as! UINavigationController
             let vc = destinationNavigationController.topViewController as! UsersListViewController
             vc.delegate = self
@@ -186,9 +183,12 @@ extension ConversationListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedConversation = self.conversations?[indexPath.row]
-        self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
+        self.selectedConversation = self.conversations?[indexPath.row]
+
+        let vc = CustomSKYChatConversationViewController()
+        vc.conversation = self.selectedConversation
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
