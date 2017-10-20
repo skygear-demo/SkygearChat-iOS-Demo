@@ -450,7 +450,7 @@ NSString *const SKYChatRecordChangeUserInfoKey = @"recordChange";
         completion:(SKYChatMessageCompletion)completion
 {
     message.conversationRef = [SKYReference referenceWithRecord:conversation];
-    if (!message.attachment || message.attachment.url.isFileURL) {
+    if (!message.attachment || !message.attachment.url.isFileURL) {
         [self saveMessage:message completion:completion];
         return;
     }
@@ -1013,7 +1013,7 @@ NSString *const SKYChatRecordChangeUserInfoKey = @"recordChange";
                 usingBlock:^(NSNotification *_Nonnull note) {
                     SKYChatRecordChange *recordChange =
                         [note.userInfo objectForKey:SKYChatRecordChangeUserInfoKey];
-                    if (![recordChange.recordType isEqualToString:@"conversation"]  && ![recordChange.recordType isEqualToString:@"message"]) {
+                    if (![recordChange.recordType isEqualToString:@"conversation"]) {
                         return;
                     }
                     NSLog(@"Got conversation");
@@ -1044,5 +1044,4 @@ NSString *const SKYChatRecordChangeUserInfoKey = @"recordChange";
                   name:SKYChatDidReceiveTypingIndicatorNotification
                 object:self];
 }
-
 @end

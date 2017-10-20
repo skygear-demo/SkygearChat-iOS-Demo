@@ -18,8 +18,24 @@
 //
 
 import JSQMessagesViewController
+import ALCameraViewController
+import CTAssetsPickerController
+import AVFoundation
+import SKPhotoBrowser
 
 @objc public protocol SKYChatConversationViewControllerDelegate: class {
+
+    /**
+     * For customizing message date display
+     */
+
+    @objc optional func conversationViewController(
+        _ controller: SKYChatConversationViewController,
+        dateStringAt indexPath: IndexPath) -> NSAttributedString
+
+    @objc optional func conversationViewController(
+        _ controller: SKYChatConversationViewController,
+        shouldShowDateAt indexPath: IndexPath) -> Bool
 
     /**
      * For customizing the views
@@ -34,9 +50,16 @@ import JSQMessagesViewController
     @objc optional func accessoryButtonShouldShowInConversationViewController(
         _ controller: SKYChatConversationViewController) -> Bool
 
+    @objc optional func cameraButtonShouldShowInConversationViewController(
+        _ controller: SKYChatConversationViewController) -> Bool
+
     @objc optional func conversationViewController(
         _ controller: SKYChatConversationViewController,
         alertControllerForAccessoryButton button: UIButton) -> UIAlertController
+
+    @objc optional func conversationViewController(
+        _ controller: SKYChatConversationViewController,
+        shouldShowSenderNameAt indexPath: IndexPath) -> Bool
 
     /**
      * Hooks on send message flow
@@ -63,7 +86,7 @@ import JSQMessagesViewController
     @objc optional func conversationViewController(
         _ controller: SKYChatConversationViewController,
         failedFetchingParticipantWithError error: Error)
-    
+
     @objc optional func startFetchingMessages(_ controller: SKYChatConversationViewController)
 
     @objc optional func conversationViewController(_ controller: SKYChatConversationViewController,
@@ -74,7 +97,7 @@ import JSQMessagesViewController
         failedFetchingMessagesWithError error: Error)
 }
 
-open class SKYChatConversationViewController: JSQMessagesViewController {
+open class SKYChatConversationViewController: JSQMessagesViewController, AVAudioRecorderDelegate, SKYChatConversationImageItemDelegate {
 
     weak public var delegate: SKYChatConversationViewControllerDelegate?
 
@@ -84,6 +107,9 @@ open class SKYChatConversationViewController: JSQMessagesViewController {
     public var messages: [SKYMessage] = []
     public var messagesFetchLimit: UInt = 25
     public var typingIndicatorShowDuration: TimeInterval = TimeInterval(5)
+    public var offsetYToLoadMore: CGFloat = CGFloat(40)
+    fileprivate var hasMoreMessageToFetch: Bool = false
+    fileprivate var isFetchingMessage: Bool = false
 
     public var messageChangeObserver: Any?
     public var typingIndicatorChangeObserver: Any?
@@ -92,6 +118,16 @@ open class SKYChatConversationViewController: JSQMessagesViewController {
     public var bubbleFactory: JSQMessagesBubbleImageFactory? = JSQMessagesBubbleImageFactory()
     public var incomingMessageBubble: JSQMessagesBubbleImage?
     public var outgoingMessageBubble: JSQMessagesBubbleImage?
+
+    var defaultMediaDataFactory: JSQMessageMediaDataFactory = JSQMessageMediaDataFactory()
+    open var messageMediaDataFactory: JSQMessageMediaDataFactory {
+        get {
+            return defaultMediaDataFactory
+        }
+    }
+
+
+    public var cameraButton: UIButton?
 
     public var incomingMessageBubbleColor: UIColor? {
         didSet {
@@ -108,9 +144,25 @@ open class SKYChatConversationViewController: JSQMessagesViewController {
     }
 
     static let errorDomain: String = "SKYChatConversationViewControllerErrorDomain"
+
     var errorCreator: SKYErrorCreator {
         return SKYErrorCreator(defaultErrorDomain: SKYChatConversationViewController.errorDomain)
     }
+
+    open func getMessageMediaDataFactory() -> JSQMessageMediaDataFactory {
+        return messageMediaDataFactory
+    }
+
+    var sendButton: UIButton?
+    var recordButton: UIButton?
+    var audioRecorder: AVAudioRecorder?
+    var inputTextView: UITextView?
+    var slideToCancelTextView: UITextView?
+    var gesture: UILongPressGestureRecognizer?
+    var isRecordingCancelled: Bool = false
+    var audioDict: [String: SKYChatConversationAudioItem] = [:]
+    var audioTime: TimeInterval?
+    var indicator: UIActivityIndicatorView?
 }
 
 // MARK: - Initializing
@@ -168,6 +220,9 @@ extension SKYChatConversationViewController {
         self.unsubscribeMessageChanges()
         self.unsubscribeTypingIndicatorChanges()
         self.skygear.chatExtension?.unsubscribeFromUserChannel()
+        for (key, audioItem) in self.audioDict {
+            audioItem.stop()
+        }
     }
 
     func dismiss(animated: Bool) {
@@ -187,7 +242,61 @@ extension SKYChatConversationViewController {
 // MARK: - Rendering
 
 extension SKYChatConversationViewController {
+    func createSlideToCancelTextView(_ frame: CGRect) -> UITextView {
+        let textView = UITextView(frame: frame)
+        textView.isEditable = false
+        textView.isSelectable = false
+        textView.text = "Slide to Cancel";
+        textView.backgroundColor = UIColor.clear
+        textView.textColor = UIColor.darkGray
+        return textView
+    }
 
+    func createRecordButton(_ frame: CGRect) -> UIButton {
+        let recordButton = UIButton(frame: frame)
+        recordButton.setImage(UIImage(named: "icon-mic", in: self.bundle(), compatibleWith: nil), for: UIControlState.normal)
+        recordButton.tintColor = self.sendButton?.tintColor
+        return recordButton
+    }
+
+    func reLayout() {
+        let contentView = self.inputToolbar?.contentView
+        let rightContainerView = contentView?.rightBarButtonContainerView
+        let sendButton = contentView?.rightBarButtonItem
+        let cameraButton = self.cameraButton!
+        rightContainerView?.removeConstraints(rightContainerView?.constraints ?? [])
+
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: cameraButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 32),
+            NSLayoutConstraint(item: cameraButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 32),
+            NSLayoutConstraint(item: cameraButton, attribute: .left, relatedBy: .equal, toItem: rightContainerView, attribute: .left, multiplier: 1, constant: 8),
+            NSLayoutConstraint(item: cameraButton, attribute: .right, relatedBy: .equal, toItem: sendButton, attribute: .left, multiplier: 1, constant: -8),
+            NSLayoutConstraint(item: cameraButton, attribute: .top, relatedBy: .equal, toItem: rightContainerView, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: cameraButton, attribute: .bottom, relatedBy: .equal, toItem: rightContainerView, attribute: .bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: sendButton, attribute: .right, relatedBy: .equal, toItem: rightContainerView, attribute: .right, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: sendButton, attribute: .top, relatedBy: .equal, toItem: rightContainerView, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: sendButton, attribute: .bottom, relatedBy: .equal, toItem: rightContainerView, attribute: .bottom, multiplier: 1, constant: 0)
+            ])
+    }
+
+    func shouldShowCameraButton() -> Bool {
+        return
+            self.delegate?.cameraButtonShouldShowInConversationViewController?(self) ?? true
+    }
+
+    func createActivityIndicator() {
+        self.indicator = UIActivityIndicatorView()
+        self.indicator?.activityIndicatorViewStyle = .gray
+        self.indicator?.hidesWhenStopped = true
+        self.view.addSubview(indicator!)
+        indicator?.superview?.bringSubview(toFront: indicator!)
+        indicator?.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: self.indicator!, attribute: .centerX, relatedBy: .equal, toItem: self.view, attribute: .centerX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: self.indicator!, attribute: .centerY, relatedBy: .equal, toItem: self.view, attribute: .centerY, multiplier: 1, constant: 0)
+            ])
+    }
+    
     open func customizeViews() {
         self.updateTitle()
 
@@ -200,12 +309,32 @@ extension SKYChatConversationViewController {
         }
 
         let shouldShowAccessoryButton: Bool =
-            self.delegate?.accessoryButtonShouldShowInConversationViewController?(self) ?? false
+            self.delegate?.accessoryButtonShouldShowInConversationViewController?(self) ?? true
 
         if !shouldShowAccessoryButton {
             self.inputToolbar?.contentView?.leftBarButtonItem?.removeFromSuperview()
             self.inputToolbar?.contentView?.leftBarButtonItem = nil
         }
+
+        let shouldShowCameraButton: Bool = self.shouldShowCameraButton()
+
+        self.sendButton = self.inputToolbar?.contentView?.rightBarButtonItem
+        self.sendButton?.removeFromSuperview()
+        self.inputTextView = self.inputToolbar?.contentView?.textView
+        self.slideToCancelTextView = self.createSlideToCancelTextView(self.inputTextView!.frame)
+        self.recordButton = self.createRecordButton(self.sendButton!.frame)
+
+        if shouldShowCameraButton {
+            let cameraButton = UIButton(type: .custom)
+            cameraButton.translatesAutoresizingMaskIntoConstraints = false
+            cameraButton.setImage(UIImage(named: "icon-camera", in: self.bundle(), compatibleWith: nil), for: .normal)
+            cameraButton.addTarget(self, action: #selector(didPressCameraButton(_:)), for: .touchUpInside)
+            self.inputToolbar?.contentView?.rightBarButtonContainerView.addSubview(cameraButton)
+            self.cameraButton = cameraButton
+        }
+
+        self.setRecordButton()
+        self.createActivityIndicator()
     }
 
     open func updateTitle() {
@@ -232,15 +361,44 @@ extension SKYChatConversationViewController {
 
         var msgSenderName: String = ""
         if let sender = self.getSender(forMessage: msg),
-            let senderName = sender.object(forKey: "name") as? String {
+            let senderName = sender.object(forKey: "username") as? String {
 
             msgSenderName = senderName
         }
+        
+        let mediaData = self.messageMediaDataFactory.mediaData(with: msg)
+        var jsqMessage: JSQMessage
 
-        return JSQMessage(senderId: msg.creatorUserRecordID(),
-                          senderDisplayName: msgSenderName,
-                          date: msg.creationDate(),
-                          text: msg.body)
+        if mediaData == nil {
+            jsqMessage = JSQMessage(senderId: msg.creatorUserRecordID(),
+                                    senderDisplayName: msgSenderName,
+                                    date: msg.creationDate(),
+                                    text: msg.body)
+        } else {
+            
+            
+            jsqMessage = JSQMessage(senderId: msg.creatorUserRecordID(),
+                                    senderDisplayName: msgSenderName,
+                                    date: msg.creationDate(),
+                                    media: mediaData)
+            
+            /* Need to store strong reference for audio data
+               https://github.com/jessesquires/JSQMessagesViewController/issues/1705
+            */
+            if let audioItem = mediaData as? SKYChatConversationAudioItem {
+                let key = msg.recordID().canonicalString
+                if let origAudioItem = self.audioDict[key] {
+                    origAudioItem.stop()
+                }
+                self.audioDict[key] = audioItem
+            }
+            
+            if let imageItem = mediaData as? SKYChatConversationImageItem {
+                imageItem.delegate = self
+            }
+        }
+
+        return jsqMessage
     }
 
     open override func collectionView(
@@ -286,7 +444,102 @@ extension SKYChatConversationViewController {
     ) -> CGFloat {
         return CGFloat(14)
     }
-
+    
+    open override func collectionView(
+        _ collectionView: JSQMessagesCollectionView!,
+        attributedTextForCellTopLabelAt indexPath: IndexPath!
+        ) -> NSAttributedString! {
+        if let ds = self.delegate?.conversationViewController?(self, dateStringAt: indexPath) {
+            return ds
+        }
+        
+        let msg = self.messages[indexPath.row]
+        let date = msg.creationDate()
+        
+        let dateFormatter: DateFormatter
+        dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        dateFormatter.doesRelativeDateFormatting = true
+        let dateString = dateFormatter.string(from: date)
+        
+        return NSAttributedString(string: "\(dateString)")
+    }
+    
+    open override func collectionView(
+        _ collectionView: JSQMessagesCollectionView!,
+        layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout!,
+        heightForCellTopLabelAt indexPath: IndexPath!
+        ) -> CGFloat {
+        var shouldShow: Bool
+        if let s = self.delegate?.conversationViewController?(self, shouldShowDateAt: indexPath) {
+            shouldShow = s
+        } else {
+            // default behaviour
+            // skip when date string is the same as previous one
+            if indexPath.row == 0 {
+                shouldShow = true
+            } else {
+                let thisString = self.collectionView(collectionView,
+                                                     attributedTextForCellTopLabelAt: indexPath)
+                let lastIndexPath = IndexPath(row: indexPath.row - 1, section: indexPath.section)
+                let lastString = self.collectionView(collectionView,
+                                                     attributedTextForCellTopLabelAt: lastIndexPath)
+                shouldShow = thisString?.string != lastString?.string
+            }
+        }
+        
+        return shouldShow ? CGFloat(20) : CGFloat(0)
+    }
+    
+    open override func collectionView(
+        _ collectionView: JSQMessagesCollectionView!,
+        attributedTextForMessageBubbleTopLabelAt indexPath: IndexPath!
+        ) -> NSAttributedString! {
+        let msg = self.messages[indexPath.row]
+        var senderName: String = ""
+        if let user = self.getSender(forMessage: msg),
+            let userName = user.object(forKey: "username") as? String {
+            senderName = userName
+        }
+        
+        return NSAttributedString(string: senderName)
+    }
+    
+    open override func collectionView(
+        _ collectionView: JSQMessagesCollectionView!,
+        layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout!,
+        heightForMessageBubbleTopLabelAt indexPath: IndexPath!
+        ) -> CGFloat {
+        var shouldShow: Bool
+        if let s
+            = self.delegate?.conversationViewController?(self, shouldShowSenderNameAt: indexPath) {
+            shouldShow = s
+        } else {
+            // default behaviour
+            // skip when it is "me" or only two members or sender name is the same as previous one
+            let msg = self.messages[indexPath.row]
+            if msg.creatorUserRecordID() == self.senderId || self.participants.count < 3 {
+                shouldShow = false
+            } else if indexPath.row == 0 {
+                shouldShow = true
+            } else {
+                let thisString = self.collectionView(
+                    collectionView,
+                    attributedTextForMessageBubbleTopLabelAt: indexPath
+                )
+                let lastIndexPath = IndexPath(row: indexPath.row - 1, section: indexPath.section)
+                let lastString = self.collectionView(
+                    collectionView,
+                    attributedTextForMessageBubbleTopLabelAt: lastIndexPath
+                )
+                shouldShow = thisString?.string != lastString?.string
+            }
+        }
+        
+        return shouldShow ? CGFloat(14) : CGFloat(0)
+    }
+    
     open override func collectionView(
         _ collectionView: JSQMessagesCollectionView!,
         avatarImageDataForItemAt indexPath: IndexPath!
@@ -295,7 +548,7 @@ extension SKYChatConversationViewController {
         let msg = self.messages[indexPath.row]
         var senderName: String = ""
         if let user = self.getSender(forMessage: msg),
-            let userName = user.object(forKey: "name") as? String {
+            let userName = user.object(forKey: "username") as? String {
 
             senderName = userName
         }
@@ -332,6 +585,164 @@ extension SKYChatConversationViewController {
 
         self.showTypingIndicator = false
     }
+    
+    open func setRecordButton() {
+        self.inputToolbar?.contentView?.rightBarButtonItem = self.recordButton
+        self.inputToolbar?.contentView?.rightBarButtonItem.removeTarget(self, action: nil, for: UIControlEvents.touchUpInside)
+        self.inputToolbar?.contentView?.rightBarButtonItem.removeTarget(self, action: nil, for: UIControlEvents.touchDown)
+        self.inputToolbar?.contentView?.rightBarButtonItem.removeTarget(self.inputToolbar, action: nil, for: UIControlEvents.touchUpInside)
+        self.inputToolbar?.contentView?.rightBarButtonItem.isEnabled = true
+        self.cameraButton?.isHidden = false
+        self.gesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressAction(gesture:)))
+        self.gesture?.minimumPressDuration = 0.1
+        self.inputToolbar?.contentView?.rightBarButtonItem.addGestureRecognizer(self.gesture!)
+        if self.shouldShowCameraButton() {
+            self.reLayout()
+        }
+    }
+    
+    open func setSendButton() {
+        self.inputToolbar?.contentView?.rightBarButtonItem.removeGestureRecognizer(self.gesture!)
+        self.inputToolbar?.contentView?.rightBarButtonItem = self.sendButton
+        self.inputToolbar?.contentView?.rightBarButtonItem.removeTarget(self.inputToolbar, action: nil, for: UIControlEvents.touchUpInside)
+        self.inputToolbar?.contentView?.rightBarButtonItem.addTarget(self, action: #selector(didPressSendButton), for: UIControlEvents.touchUpInside)
+        if self.shouldShowCameraButton() {
+            self.reLayout()
+        }
+    }
+    
+    func longPressAction(gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            self.didStartRecord(button: self.recordButton!)
+        }
+        else {
+            var cancelled = gesture.state == .cancelled
+            if gesture.state == .changed || gesture.state == .ended {
+                guard let view = gesture.view else {
+                    return
+                }
+                
+                let point = gesture.location(in: view.superview)
+                if point.x < -10 || point.y < -10 {
+                    cancelled = true
+                }
+            }
+            
+            if cancelled {
+                self.didStopRecord(button: self.recordButton!, cancelled: true)
+            }
+            else if gesture.state == .ended && !cancelled {
+                self.didStopRecord(button: self.recordButton!)
+            }
+        }
+    }
+    
+    open func imageDidTap(_ url: URL?) {
+        let photo = SKPhoto.photoWithImageURL(url!.absoluteString)
+        let browser = SKPhotoBrowser(photos: [photo])
+        
+        self.present(browser, animated: true, completion: nil)
+    }
+
+    func defaultAccessoryButtonAlertController() -> UIAlertController {
+        let alert = UIAlertController(title: "Actions",
+                                      message: nil,
+                                      preferredStyle: .actionSheet)
+
+
+        // TODO: support Photo or Video
+        alert.addAction(
+            UIAlertAction(title: "Photo" /* Photo or Video */, style: .default, handler: self.defaultPhotoPickerActionHandler())
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        return alert
+    }
+
+    open func didPressCameraButton(_ sender: UIButton!) {
+        // There is always a cropping overlay
+        // So just disable it
+        let croppingParams = CroppingParameters(isEnabled: false, allowResizing: true, allowMoving: true, minimumSize: CGSize.init(width: 64, height: 64))
+        let imagePicker = CameraViewController(croppingParameters: croppingParams, allowsLibraryAccess: false) { [weak self] image, _ in
+            if image != nil {
+                self?.send(image: image!)
+            }
+            self?.dismiss(animated: true, completion: nil)
+        }
+
+        self.present(imagePicker, animated: true, completion: nil)
+    }
+}
+
+
+// MARK: - Send Message
+
+extension SKYChatConversationViewController {
+    open func failedToSendMessage(_ messageText: String,
+                                  date: Date,
+                                  errorCode: SKYErrorCode,
+                                  errorMessage: String) {
+        
+        let err = self.errorCreator.error(with: errorCode, message: errorMessage)
+        self.delegate?.conversationViewController?(self,
+                                                   failedToSendMessageText: messageText,
+                                                   date: date,
+                                                   error: err)
+    }
+    
+    func sendMessage(_ msg: SKYMessage) {
+        guard let conv = self.conversation else {
+            self.failedToSendMessage(msg.body ?? "",
+                                     date: msg.creationDate(),
+                                     errorCode: SKYErrorInvalidArgument,
+                                     errorMessage: "Cannot send message to nil conversation")
+            return
+        }
+
+        self.delegate?.conversationViewController?(self, readyToSendMessage: msg)
+        self.skygear.chatExtension?.addMessage(
+            msg,
+            to: conv,
+            completion: { (result, error) in
+                guard error == nil else {
+                    print("Failed to sent message: \(error!.localizedDescription)")
+                    self.failedToSendMessage(msg.body ?? "",
+                                             date: msg.creationDate(),
+                                             errorCode: SKYErrorBadResponse,
+                                             errorMessage: error!.localizedDescription)
+                    return
+                }
+                
+                guard let sentMsg = result else {
+                    print("Error: Got nil sent message")
+                    self.failedToSendMessage(msg.body ?? "",
+                                             date: msg.creationDate(),
+                                             errorCode: SKYErrorBadResponse,
+                                             errorMessage: "Got nil sent message")
+                    return
+                }
+                
+                // find the index for the "sending" message
+                let ids = self.messages.map({$0.recordID().recordName})
+                guard let idx = ids.index(of: sentMsg.recordID().recordName) else {
+                    return
+                }
+                
+                self.messages[idx] = sentMsg
+                self.collectionView?.reloadData()
+                
+                self.delegate?.conversationViewController?(self, finishSendingMessage: sentMsg)
+                self.setRecordButton()
+        }
+        )
+        
+        self.messages.append(msg)
+        self.collectionView?.reloadData()
+        self.scrollToBottom(animated: true)
+        self.finishSendingMessage(animated: true)
+        self.skygear.chatExtension?.sendTypingIndicator(.finished, in: self.conversation!)
+    }
 }
 
 // MARK: - Actions
@@ -339,13 +750,16 @@ extension SKYChatConversationViewController {
 extension SKYChatConversationViewController {
     open override func textViewDidChange(_ textView: UITextView) {
         super.textViewDidChange(textView)
-
+        if textView.text.characters.count > 0 {
+            self.setSendButton()
+        } else {
+            self.setRecordButton()
+        }
         self.skygear.chatExtension?.sendTypingIndicator(.begin, in: self.conversation!)
     }
 
     open override func textViewDidEndEditing(_ textView: UITextView) {
         super.textViewDidEndEditing(textView)
-
         self.skygear.chatExtension?.sendTypingIndicator(.pause, in: self.conversation!)
     }
 
@@ -355,6 +769,8 @@ extension SKYChatConversationViewController {
                                                        alertControllerForAccessoryButton: sender!) {
             self.present(alert, animated: true, completion: nil)
         }
+        
+        self.present(self.defaultAccessoryButtonAlertController(), animated: true, completion: nil)
     }
 
     open override func didPressSend(_ button: UIButton!,
@@ -362,20 +778,104 @@ extension SKYChatConversationViewController {
                                     senderId: String!,
                                     senderDisplayName: String!,
                                     date: Date!) {
+        let msg = SKYMessage()
+        msg.body = text
+        msg.setCreatorUserRecordID(self.senderId)
+        msg.setCreationDate(date)
+        self.sendMessage(msg)
+    }
+    
+    open func didPressSendButton(button: UIButton) {
+        self.inputToolbar?.delegate.messagesInputToolbar(self.inputToolbar, didPressRightBarButton: button)
+    }
 
-        
+    open override func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        self.loadMoreMessage()
+    }
+
+    open override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrollViewHeight = scrollView.frame.size.height;
+        let scrollContentSizeHeight = scrollView.contentSize.height;
+        let scrollOffset = scrollView.contentOffset.y;
+
+        if scrollOffset < self.offsetYToLoadMore {
+            self.loadMoreMessage()
+        }
+
+        // should automaticallyScrollsToMostRecentMessage when reach bottom
+        self.automaticallyScrollsToMostRecentMessage = scrollOffset >= scrollContentSizeHeight - scrollViewHeight
+    }
+
+    open func loadMoreMessage() {
+        if !self.isFetchingMessage && self.hasMoreMessageToFetch {
+            let firstMessage = self.messages[0]
+            self.fetchMessages(before: firstMessage.creationDate())
+        }
+    }
+}
+
+// MARK: - Default accessory action handler
+
+extension SKYChatConversationViewController {
+    public func defaultPhotoPickerActionHandler() -> (UIAlertAction) -> Swift.Void {
+        return { _ in
+            let picker = CTAssetsPickerController()
+            picker.delegate = self
+            picker.assetsFetchOptions = PHFetchOptions()
+            picker.assetsFetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+            self.present(picker, animated: true, completion: nil)
+        }
+    }
+}
+
+// MARK: - CTAssetsPickerControllerDelegate
+
+extension SKYChatConversationViewController: CTAssetsPickerControllerDelegate {
+    public func assetsPickerController(_ picker: CTAssetsPickerController!, didFinishPickingAssets assets: [Any]!) {
+        for asset in assets {
+            switch asset {
+            case let a as PHAsset:
+                self.send(asset: a)
+            default:
+                NSLog("Unknown asset type")
+            }
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+
+// MARK: - Send photos
+
+extension SKYChatConversationViewController {
+    func cleanup(asset: SKYAsset) {
+        try? FileManager.default.removeItem(at: asset.url)
+    }
+
+    open func send(asset: PHAsset) {
+        let manager = PHImageManager.default()
+        let option = PHImageRequestOptions()
+        option.resizeMode = .fast
+        option.deliveryMode = .fastFormat
+        manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .default, options: option, resultHandler: {(result, info)->Void in
+            if result != nil {
+                self.send(image: result!)
+            }
+        })
+    }
+
+    open func send(image: UIImage) {
+        let date = Date()
 
         guard let conv = self.conversation else {
-            self.failedToSendMessage(text,
-                                     date: date!,
+            self.failedToSendMessage("",
+                                     date: date,
                                      errorCode: SKYErrorInvalidArgument,
                                      errorMessage: "Cannot send message to nil conversation")
             return
         }
 
-        
-        let msg = SKYMessage()
-        msg.body = text
+        let msg = SKYMessage(withImage: image)
         msg.setCreatorUserRecordID(self.senderId)
         msg.setCreationDate(date)
 
@@ -384,10 +884,16 @@ extension SKYChatConversationViewController {
             msg,
             to: conv,
             completion: { (result, error) in
+                defer {
+                    if let attachment = msg.attachment {
+                        self.cleanup(asset: attachment)
+                    }
+                }
+
                 guard error == nil else {
                     print("Failed to sent message: \(error!.localizedDescription)")
-                    self.failedToSendMessage(text,
-                                             date: date!,
+                    self.failedToSendMessage("",
+                                             date: date,
                                              errorCode: SKYErrorBadResponse,
                                              errorMessage: error!.localizedDescription)
                     return
@@ -395,8 +901,8 @@ extension SKYChatConversationViewController {
 
                 guard let sentMsg = result else {
                     print("Error: Got nil sent message")
-                    self.failedToSendMessage(text,
-                                             date: date!,
+                    self.failedToSendMessage("",
+                                             date: date,
                                              errorCode: SKYErrorBadResponse,
                                              errorMessage: "Got nil sent message")
                     return
@@ -412,29 +918,120 @@ extension SKYChatConversationViewController {
                 self.collectionView?.reloadData()
 
                 self.delegate?.conversationViewController?(self, finishSendingMessage: sentMsg)
-            }
+        }
         )
 
         self.messages.append(msg)
-        self.finishSendingMessage(animated: true)
-
-        self.skygear.chatExtension?.sendTypingIndicator(.finished, in: self.conversation!)
-    }
-
-    open func failedToSendMessage(_ messageText: String,
-                                  date: Date,
-                                  errorCode: SKYErrorCode,
-                                  errorMessage: String) {
-
-        let err = self.errorCreator.error(with: errorCode, message: errorMessage)
-        self.delegate?.conversationViewController?(self,
-                                                   failedToSendMessageText: messageText,
-                                                   date: date,
-                                                   error: err)
+        self.collectionView?.reloadData()
+        self.scrollToBottom(animated: true)
     }
 }
 
-// MARK: - Subscription
+// MARK: - Audio
+
+extension SKYChatConversationViewController {
+    func startRecord() {
+        print("Start Recording")
+        let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("recording.m4a")
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 2,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        
+        do {
+            
+            if (self.audioRecorder == nil) {
+                self.audioRecorder = try AVAudioRecorder(url: url, settings: settings)
+                self.audioRecorder?.delegate = self
+                self.audioRecorder?.stop()
+                self.audioRecorder?.prepareToRecord()
+            }
+            
+            self.audioRecorder?.record()
+        } catch {
+            //TODO: show dialog
+            
+        }
+    }
+    
+    func didStartRecord(button: UIButton) {
+        
+        let recordingSession = AVAudioSession.sharedInstance()
+        
+        if recordingSession.recordPermission() == .granted {
+            do {
+                try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+                try recordingSession.setActive(true)
+                self.inputTextView?.isHidden = true
+                self.inputToolbar?.contentView?.leftBarButtonItem?.isHidden = true
+                self.inputToolbar?.contentView?.addSubview(self.slideToCancelTextView!)
+                self.cameraButton?.isHidden = true
+                self.startRecord()
+            } catch {
+                print("Cannot start recording session.")
+            }
+        } else {
+            recordingSession.requestRecordPermission() { allowed in }
+        }
+    }
+    
+    open func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        
+        if !flag || self.isRecordingCancelled {
+            print("Cancelled")
+            self.setRecordButton()
+            return
+        }
+        do{
+            self.setRecordButton()
+            let asset = SKYAsset(data: try Data(contentsOf: recorder.url))
+            asset.mimeType = "audio/m4a"
+            SKYContainer.default().publicCloudDatabase.uploadAsset(asset) { (asset, error) in
+                if let err = error {
+                    let alert = UIAlertController(title: "Unable to upload", message: err.localizedDescription, preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+                print("Uploaded")
+                if let ast = asset {
+                    NSLog(ast.url.absoluteString)
+                }
+                let msg = SKYMessage()
+                msg.body = ""
+                msg.metadata = ["length": Int(self.audioTime! * 1000)]
+                msg.attachment = asset
+                msg.setCreatorUserRecordID(self.senderId)
+                msg.setCreationDate(Date())
+                self.sendMessage(msg)
+            }
+        } catch {
+            print("Unable to send audio")
+        }
+    }
+    
+    
+    func didStopRecord(button: UIButton, cancelled: Bool = false) {
+        let recordingSession = AVAudioSession.sharedInstance()
+        if recordingSession.recordPermission() == .granted {
+            print("Stop recording", cancelled)
+            self.setSendButton()
+            self.isRecordingCancelled = cancelled
+            self.audioTime = self.audioRecorder?.currentTime
+            self.audioRecorder?.stop()
+            self.slideToCancelTextView?.removeFromSuperview()
+            self.inputTextView?.isHidden = false
+            self.inputToolbar?.contentView?.leftBarButtonItem?.isHidden = false
+            do {
+                
+                try recordingSession.setActive(false)
+            } catch {
+                print("Failed to stop recording session.")
+            }
+        }
+    }
+}
 
 extension SKYChatConversationViewController {
 
@@ -578,7 +1175,7 @@ extension SKYChatConversationViewController {
                 }
 
                 if let senderRecord = self.participants[self.senderId],
-                    let senderName = senderRecord.object(forKey: "name") as? String {
+                    let senderName = senderRecord.object(forKey: "username") as? String {
 
                     self.senderDisplayName = senderName
                 }
@@ -600,7 +1197,9 @@ extension SKYChatConversationViewController {
             return
         }
 
+        self.indicator?.startAnimating()
         let chatExt = self.skygear.chatExtension
+        self.isFetchingMessage = true
 
         self.delegate?.startFetchingMessages?(self)
         chatExt?.fetchMessages(
@@ -609,6 +1208,8 @@ extension SKYChatConversationViewController {
             beforeTime: before,
                  order: nil,
             completion: { (result, error) in
+                self.isFetchingMessage = false
+                self.indicator?.stopAnimating()
                 guard error == nil else {
                     print("Failed to fetch messages: \(error?.localizedDescription ?? "")")
                     self.delegate?.conversationViewController?(
@@ -640,10 +1241,13 @@ extension SKYChatConversationViewController {
                 var newMessages = Array(msgs.reversed())
                 newMessages.append(contentsOf: self.messages)
                 self.messages = newMessages
+                self.hasMoreMessageToFetch = msgs.count > 0
 
                 self.delegate?.conversationViewController?(self, didFetchedMessages: msgs)
 
                 self.finishReceivingMessage()
+                self.scroll(to: IndexPath(row: msgs.count, section: 0), animated: false)
+                self.collectionView.flashScrollIndicators()
         })
     }
 
@@ -654,5 +1258,16 @@ extension SKYChatConversationViewController {
         }
 
         return self.participants[message.creatorUserRecordID()]
+    }
+}
+
+// MARK: Resource
+
+extension SKYChatConversationViewController {
+    open func bundle() -> Bundle? {
+        let podBundle = Bundle(for: SKYChatConversationViewController.self)
+        let bundleUrl = podBundle.url(forResource: "SKYKitChatUI", withExtension:"bundle")
+        let bundle = Bundle(url: bundleUrl!)
+        return bundle
     }
 }

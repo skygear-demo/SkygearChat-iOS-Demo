@@ -1,0 +1,6 @@
+framework module LruCache {
+  umbrella header "LruCache-umbrella.h"
+
+  export *
+  module * { export * }
+}

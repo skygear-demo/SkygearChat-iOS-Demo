@@ -14,6 +14,7 @@
 #import "SKYConversation.h"
 #import "SKYMessage.h"
 #import "SKYUserChannel.h"
+#import "SKYAsset+mimeType.h"
 #import "SKYChatExtension.h"
 #import "SKYChatExtension_Private.h"
 #import "SKYChatReceipt.h"

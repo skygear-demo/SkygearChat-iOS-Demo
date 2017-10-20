@@ -177,7 +177,7 @@ extension SKYChatParticipantListViewController: UITableViewDelegate, UITableView
                 avatarImage = ds.listViewController?(self,
                                                      avatarImageForParticipant: participantRecord,
                                                      atIndexPath: indexPath)
-            } else if let name = participantRecord.object(forKey: "name") as? String {
+            } else if let name = participantRecord.object(forKey: "username") as? String {
                 avatarImage = UIImage.avatarImage(forInitialsOfName: name)
             }
             cell.avatarImage = avatarImage
@@ -288,14 +288,14 @@ extension SKYChatParticipantListViewController {
             keyword = "name"
             break
         }
-        
+
         var predicate: NSPredicate
         if let term = self.searchTerm {
-            predicate = NSPredicate(format: "%K = %@", keyword, "\(term)")
+            predicate = NSPredicate(format: "%K LIKE[c] %@", keyword, "*\(term)*")
         } else {
             predicate = NSPredicate(format: "1 = 1")
         }
-        
+
         if let scope = self.participantScope {
             predicate = NSCompoundPredicate(
                 andPredicateWithSubpredicates: [predicate, scope.predicate!])

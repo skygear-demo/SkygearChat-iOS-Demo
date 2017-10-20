@@ -1,6 +1,6 @@
 {
   "name": "SKYKitChat",
-  "version": "0.0.2",
+  "version": "1.1.0",
   "summary": "Chat extension for SKYKit",
   "description": "This is the client library for the Skygear Chat extension.",
   "homepage": "https://github.com/SkygearIO/chat-SDK-iOS",
@@ -10,19 +10,24 @@
   },
   "source": {
     "git": "https://github.com/SkygearIO/chat-SDK-iOS.git",
-    "tag": "0.0.2"
+    "tag": "1.1.0"
   },
   "platforms": {
-    "ios": "8.0"
+    "ios": "8.2"
   },
   "default_subspecs": "Core",
   "subspecs": [
     {
       "name": "Core",
       "source_files": "SKYKitChat/Classes/Core/**/*",
+      "resource_bundles": {
+        "SKYKitChatUI": [
+          "SKYKitChat/Assets/*.xcassets"
+        ]
+      },
       "dependencies": {
         "SKYKit/Core": [
-          "~> 1.1.0"
+          "~> 1.1"
         ]
       }
     },
@@ -34,13 +39,25 @@
 
         ],
         "SKYKit/Core": [
-          "~> 1.1.0"
+          "~> 1.1"
         ],
         "JSQMessagesViewController": [
           "~> 7.3.0"
         ],
         "SVProgressHUD": [
           "~> 2.1.0"
+        ],
+        "ALCameraViewController": [
+          "~> 2.0"
+        ],
+        "LruCache": [
+          "~> 0.1"
+        ],
+        "CTAssetsPickerController": [
+          "~> 3.3.1"
+        ],
+        "SKPhotoBrowser": [
+          "~> 4.1.1"
         ]
       }
     }
