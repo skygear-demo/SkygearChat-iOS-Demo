@@ -315,7 +315,9 @@ extension ConversationListViewController: UISearchBarDelegate {
 extension ConversationListViewController: UsersListViewControllerDelegate {
     func userlistViewController(didFinish conversation: SKYConversation) {
         self.selectedConversation = conversation
-        self.performSegue(withIdentifier: ConversationViewSegueIdentifier, sender: self)
+        let vc = CustomSKYChatConversationViewController()
+        vc.conversation = self.selectedConversation
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
