@@ -92,6 +92,7 @@ class UsersListViewController: UIViewController {
         }else if segue.identifier == ChangeToGroupSelectionSegueIdentifier {
             let vc = segue.destination as! UsersListViewController
             vc.groupSelection = true
+            vc.delegate = self.delegate
         }
     }
 }
