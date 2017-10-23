@@ -10,7 +10,7 @@ import UIKit
 import SKYKit
 
 let RegisterSegueIdentifier:String = "Register"
-let LoggedInSegueIdentifier:String = "MainScreen"
+let LoggedInSegueIdentifier:String = "LoggedIn"
 
 class LandingViewController: UIViewController {
     
