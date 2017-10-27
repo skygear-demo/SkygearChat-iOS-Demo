@@ -23,15 +23,14 @@ class ConversationListViewController: UIViewController {
 
     @IBOutlet weak var conversationlistTableView: UITableView!
     @IBOutlet weak var conversationSearchBar: UISearchBar!
-    
+
     var refreshControl:UIRefreshControl!
     var selectedConversation:SKYConversation? = nil
     var conversations:[SKYConversation]? = nil
     var cachedConversations:[SKYConversation]? = nil
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.refreshControl = UIRefreshControl()
         self.refreshControl.isHidden = false
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -39,30 +38,26 @@ class ConversationListViewController: UIViewController {
         self.conversationlistTableView.addSubview(refreshControl);
         self.refreshControl.beginRefreshing()
         self.handleRefresh(refreshControl: self.refreshControl)
-        
         self.conversationlistTableView.emptyDataSetDelegate = self
         self.conversationlistTableView.emptyDataSetSource = self
-        
         // For removing extra cells in the bottom of the tableView
         self.conversationlistTableView.tableFooterView = UIView()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = false
-        
+        super.viewWillAppear(animated)
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
         subscribeUserChannel()
     }
-    
-    override func viewDidDisappear(_ animated: Bool) {
+
+    override func viewWillDisappear(_ animated: Bool) {
         unsubscribeUserChannel()
+        super.viewWillDisappear(animated)
     }
 
     override func didReceiveMemoryWarning() {
