@@ -48,18 +48,16 @@ class ConversationListViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
         subscribeUserChannel()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         unsubscribeUserChannel()
     }
 
