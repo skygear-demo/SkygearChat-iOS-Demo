@@ -48,6 +48,8 @@ class ConversationListViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = false
+        
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
