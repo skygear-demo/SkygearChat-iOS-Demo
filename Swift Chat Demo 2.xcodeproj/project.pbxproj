@@ -22,6 +22,8 @@
 		B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */; };
 		B62AE4DA1F7A123E00395EB4 /* ConversationListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */; };
 		B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65631001F7CD7FC00A07995 /* UsersListViewController.swift */; };
+		B658956C1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658956B1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift */; };
+		B65895701FA6F8AC003BB21B /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658956F1FA6F8AC003BB21B /* SettingViewController.swift */; };
 		B6CCB3981F7A50AB009B2A7F /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */; };
 		B6CCB39A1F7A5502009B2A7F /* LoginRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */; };
 		B6CCB39C1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */; };
@@ -48,6 +50,8 @@
 		B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListViewController.swift; sourceTree = "<group>"; };
 		B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTableViewCell.swift; sourceTree = "<group>"; };
 		B65631001F7CD7FC00A07995 /* UsersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewController.swift; sourceTree = "<group>"; };
+		B658956B1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingUserInfoTableViewCell.swift; sourceTree = "<group>"; };
+		B658956F1FA6F8AC003BB21B /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationViewController.swift; sourceTree = "<group>"; };
 		B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRegistrationTableViewCell.swift; sourceTree = "<group>"; };
@@ -111,6 +115,8 @@
 				B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */,
 				B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */,
 				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
+				B658956B1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift */,
+				B658956F1FA6F8AC003BB21B /* SettingViewController.swift */,
 				B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */,
 				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
 				B65631001F7CD7FC00A07995 /* UsersListViewController.swift */,
@@ -247,6 +253,7 @@
 				"${BUILT_PRODUCTS_DIR}/JSQSystemSoundPlayer/JSQSystemSoundPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/LruCache/LruCache.framework",
 				"${BUILT_PRODUCTS_DIR}/PureLayout/PureLayout.framework",
+				"${BUILT_PRODUCTS_DIR}/SKPhotoBrowser/SKPhotoBrowser.framework",
 				"${BUILT_PRODUCTS_DIR}/SKYKit/SKYKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SKYKitChat/SKYKitChat.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
@@ -263,6 +270,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQSystemSoundPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LruCache.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PureLayout.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKPhotoBrowser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKYKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SKYKitChat.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
@@ -285,8 +293,10 @@
 				B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */,
 				B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */,
 				B62AE4D61F790A6200395EB4 /* SKYRecordExtension.swift in Sources */,
+				B65895701FA6F8AC003BB21B /* SettingViewController.swift in Sources */,
 				B6CCB39E1F7A6373009B2A7F /* LandingViewController.swift in Sources */,
 				B62AE4C21F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift in Sources */,
+				B658956C1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift in Sources */,
 				B65631011F7CD7FC00A07995 /* UsersListViewController.swift in Sources */,
 				B61C19D21F7D0CC20078D053 /* SKYQueryHelper.swift in Sources */,
 				B62AE4D81F7A11D300395EB4 /* ConversationListViewController.swift in Sources */,
