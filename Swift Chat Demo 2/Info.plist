@@ -42,10 +42,12 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>The app requires access the camera for sending image message</string>
+	<string>The app requires access the camera for sending image message.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>The app requires access the photo library for sending image message</string>
+	<string>The app requires access the photo library for sending image message.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>The app requires access the photo library for sending image message.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>The app requires access the microphone for sending voice message</string>
+	<string>The app requires access the microphone for sending voice message.</string>
 </dict>
 </plist>
