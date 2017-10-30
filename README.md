@@ -11,7 +11,7 @@ This iOS Demo is written in Swift and is powered by [Skygear](https://skygear.io
 
 ### User athentication
 - [x] User sign up and login 
-- [ ] User logout
+- [x] User logout
 
 ### Conversation creation
 - [x] Create 1 to 1 conversation
@@ -26,8 +26,8 @@ This iOS Demo is written in Swift and is powered by [Skygear](https://skygear.io
 - [x] Send text messages
 - [x] Message receipt status
 - [x] Typing indicator
-- [ ] Send photo messages
-- [ ] Send voice messages
+- [x] Send photo messages
+- [x] Send voice messages
 - [ ] Edit messages
 - [ ] Delete messages
 
@@ -47,12 +47,12 @@ This iOS Demo is written in Swift and is powered by [Skygear](https://skygear.io
 1. Clone the project
 
 	```
-	git clone git@github.com:tszkanlo/SkygearChat-iOS-Demo.git
+	git clone git@github.com:skygear-demo/SkygearChat-iOS-Demo.git
 	```
 	If you are using Xcode 8, please clone the `xcode-8` branch.
 	
 	```
-	git clone -b xcode-8 git@github.com:tszkanlo/SkygearChat-iOS-Demo.git
+	git clone -b xcode-8 git@github.com:skygear-demo/SkygearChat-iOS-Demo.git
 	```
 2. Install dependancies
 
