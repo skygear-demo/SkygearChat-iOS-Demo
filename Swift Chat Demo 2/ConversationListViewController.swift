@@ -48,7 +48,7 @@ class ConversationListViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
+        super.viewWillAppear(animated)
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
         }) { (error) in
@@ -59,6 +59,7 @@ class ConversationListViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         unsubscribeUserChannel()
+        super.viewWillDisappear(animated)
     }
 
     override func didReceiveMemoryWarning() {
