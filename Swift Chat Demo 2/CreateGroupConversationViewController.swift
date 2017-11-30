@@ -9,7 +9,6 @@
 import UIKit
 import SKYKit
 import SKYKitChat
-import JSQMessagesViewController
 import SVProgressHUD
 
 class CreateGroupConversationViewController: UIViewController {
