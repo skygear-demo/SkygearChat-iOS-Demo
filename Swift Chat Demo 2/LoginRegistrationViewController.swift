@@ -9,6 +9,7 @@
 import UIKit
 import SKYKit
 import SVProgressHUD
+import UserNotifications
 
 let LoginRegistrationTableViewCellIdentifier:String = "UserDetail"
 let MainScreenSegueIdentifier:String = "MainScreen"
@@ -48,6 +49,13 @@ class LoginRegistrationViewController: UIViewController {
                 SVProgressHUD.showError(withStatus: error.localizedDescription)
                 SVProgressHUD.dismiss(withDelay: 3)
                 return
+            }
+            let center = UNUserNotificationCenter.current()
+            center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+                // Enable or disable features based on authorization.
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
             }
             SVProgressHUD.dismiss()
             self.performSegue(withIdentifier: MainScreenSegueIdentifier, sender: self)

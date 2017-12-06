@@ -8,9 +8,10 @@
 
 import UIKit
 import SKYKit
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     var skygear: SKYContainer {
@@ -20,8 +21,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         self.skygear.configAddress("https://chatdemoapp.skygeario.com/")
         self.skygear.configure(withAPIKey: "c0d796f60a9649d78ade26e65c460459")
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
         return true
     }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print ("Registered for Push notifications with token: \(deviceToken.description)")
+        self.skygear.push.registerRemoteNotificationDeviceToken(deviceToken) { (deviceID, error) in
+            if error != nil {
+                print ("Failed to register device token: \(error)")
+                return
+            }
+        }
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+    }
+    
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
