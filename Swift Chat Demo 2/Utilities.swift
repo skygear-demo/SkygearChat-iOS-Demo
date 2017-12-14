@@ -6,8 +6,8 @@
 //  Copyright © 2017 Skygear. All rights reserved.
 //
 
-import JSQMessagesViewController
 import SVProgressHUD
+import SKYKitChat
 
 class Utilities: NSObject {
 

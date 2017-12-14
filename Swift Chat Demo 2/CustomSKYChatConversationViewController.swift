@@ -31,13 +31,15 @@ extension CustomSKYChatConversationViewController: SKYChatConversationViewContro
         
         ChatHelper.shared.cacheUserRecords(participants)
     }
-    
-    func conversationViewController(_ controller: SKYChatConversationViewController, didFetchedMessages messages: [SKYMessage]) {
+
+    func conversationViewController(_ controller: SKYChatConversationViewController, didFetchedMessages messages: [SKYMessage], isCached: Bool) {
         SVProgressHUD.dismiss()
     }
     
     func startFetchingMessages(_ controller: SKYChatConversationViewController) {
-        SVProgressHUD.show()
+        if controller.messageList.count == 0 {
+            SVProgressHUD.show()
+        }
     }
     
 }
