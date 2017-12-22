@@ -52,8 +52,21 @@ class UsersListViewController: UIViewController {
                 SKYContainer.default().chatExtension?.createDirectConversation(userID: selectedUser.recordID.recordName, title: selectedUser["username"] as? String, metadata: nil, completion: { (conversation, error) in
                     SVProgressHUD.dismiss()
                     if let error = error as NSError?{
-                        SVProgressHUD.showError(withStatus: "Error when create conversation.")
-                        print(error)
+                        if let conversationId = error.userInfo["conversation_id"] as? String {
+                            print("Conversation already exists " + conversationId)
+                            SKYContainer.default().chatExtension?.fetchConversation(
+                                conversationID: conversationId, fetchLastMessage: false, completion: {(conversation, error) in
+                                    if let error = error as NSError?{
+                                        SVProgressHUD.showError(withStatus: "Error when get conversation: \(error.localizedDescription)")
+                                        return
+                                    }
+                                    self.delegate?.userlistViewController(didFinish: conversation!)
+                                    self.dismiss(animated: true)
+                            })
+                        } else {
+                            print ("Create conversation failed. Error:\(error.localizedDescription)")
+                            SVProgressHUD.showError(withStatus: "Error when create conversation.")
+                        }
                         return
                     }
                     self.delegate?.userlistViewController(didFinish: conversation!)
