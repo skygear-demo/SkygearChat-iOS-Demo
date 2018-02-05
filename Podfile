@@ -8,10 +8,9 @@ target 'Swift Chat Demo 2' do
   # Pods for Swift Chat Demo 2
   pod 'SVProgressHUD', '~> 2.1.0'
 
-  pod 'SKYKit/Core', '~> 1.1'
-  pod 'SKYKitChat', '1.2.0-alpha.4'
-  pod 'SKYKitChat/UI', '1.2.0-alpha.4'
+  pod 'SKYKit', '~> 1.1'
+  pod 'SKYKitChat/UI', '~> 1.2.0-alpha.6'
 
-  pod 'AFDateHelper', '4.2.4'
+  pod 'AFDateHelper', '~> 4.2.7'
   pod 'DZNEmptyDataSet'
 end

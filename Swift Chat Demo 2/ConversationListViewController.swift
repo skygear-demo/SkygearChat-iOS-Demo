@@ -63,7 +63,7 @@ class ConversationListViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    func handleRefresh(refreshControl: UIRefreshControl) {
+    @objc func handleRefresh(refreshControl: UIRefreshControl) {
         SVProgressHUD.show()
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
@@ -329,7 +329,7 @@ extension ConversationListViewController: DZNEmptyDataSetSource, DZNEmptyDataSet
     
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let font = UIFont.systemFont(ofSize: 12)
-        let attrsDictionary = [NSFontAttributeName:font]
+        let attrsDictionary = [NSAttributedStringKey.font:font]
         let description = NSAttributedString(string: "You don't have any conversations at this moment. Create one now! Click the button on the upper right hand corner.", attributes: attrsDictionary)
         return description
     }
