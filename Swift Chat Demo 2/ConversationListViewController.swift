@@ -44,7 +44,6 @@ class ConversationListViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = false
         super.viewWillAppear(animated)
         self.fetchConversations(successBlock: {
             print("Fetched Conversations")
@@ -52,6 +51,11 @@ class ConversationListViewController: UIViewController {
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
         subscribeUserChannel()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
     }
 
     override func viewWillDisappear(_ animated: Bool) {
