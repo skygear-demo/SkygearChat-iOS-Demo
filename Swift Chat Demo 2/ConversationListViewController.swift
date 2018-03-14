@@ -235,11 +235,19 @@ extension ConversationListViewController: UITableViewDataSource {
             
             let conversationTitle = conversation.title ?? ""
             let conversationInitials = Utilities.getInitials(withString: conversationTitle)
-            let conversationLastMessage = conversation.lastMessage?.body
             let avatar = Utilities.avatarImage(withString: conversationInitials, color: Utilities.avatarColor(number: indexPath.row % 4), diameter: 50)
-            
+
+            var lastMessageDisplay = conversation.lastMessage?.body ?? ""
+            if let attachment = conversation.lastMessage?.attachment {
+                if attachment.mimeType.hasPrefix("image/") {
+                    lastMessageDisplay = "(Image message)"
+                } else if attachment.mimeType.hasPrefix("audio/") {
+                    lastMessageDisplay = "(Voice message)"
+                }
+            }
+
             conversationCell.avatarImageView.image = avatar
-            conversationCell.messageLabel.text = conversationLastMessage ?? ""
+            conversationCell.messageLabel.text = lastMessageDisplay
             conversationCell.lastMessageTimeLabel.text = conversationLastUpdateDateString(conversation: conversation)
             
             if conversation.participantIds.count == 2 {
