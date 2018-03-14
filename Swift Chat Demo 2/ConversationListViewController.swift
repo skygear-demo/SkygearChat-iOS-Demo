@@ -105,6 +105,8 @@ class ConversationListViewController: UIViewController {
             self.conversations = conversations
             self.cachedConversations = conversations
             self.conversationlistTableView.reloadData()
+            self.conversationlistTableView.contentOffset = CGPoint(x: 0, y: 0)
+
             successBlock()
         })
     }
@@ -343,5 +345,9 @@ extension ConversationListViewController: DZNEmptyDataSetSource, DZNEmptyDataSet
             return -navigationBar.frame.height * 0.75
         }
         return 0
+    }
+
+    func emptyDataSetDidDisappear(_ scrollView: UIScrollView!) {
+        scrollView.contentOffset = CGPoint(x: 0, y: 0)
     }
 }
