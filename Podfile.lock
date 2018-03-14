@@ -7,7 +7,7 @@ PODS:
   - FMDB (2.6.2):
     - FMDB/standard (= 2.6.2)
   - FMDB/standard (2.6.2)
-  - JSQMessagesViewController-Skygear (7.3.5.1):
+  - JSQMessagesViewController-Skygear (7.3.5.3):
     - JSQSystemSoundPlayer (~> 2.0.1)
   - JSQSystemSoundPlayer (2.0.1)
   - LruCache (0.1)
@@ -16,7 +16,7 @@ PODS:
   - Realm (3.0.2):
     - Realm/Headers (= 3.0.2)
   - Realm/Headers (3.0.2)
-  - SKPhotoBrowser (5.0.3)
+  - SKPhotoBrowser (5.0.6)
   - SKYKit (1.3.2):
     - SKYKit/Core (= 1.3.2)
     - SKYKit/ForgotPassword (= 1.3.2)
@@ -29,16 +29,16 @@ PODS:
     - SKYKit/Core
   - SKYKit/SSO (1.3.2):
     - SKYKit/Core
-  - SKYKitChat/Core (1.2.0-alpha.6):
+  - SKYKitChat/Core (1.2.0-alpha.7):
     - Realm (~> 3.0.1)
     - SKYKit/Core (~> 1.3.1)
-  - SKYKitChat/UI (1.2.0-alpha.6):
+  - SKYKitChat/UI (1.2.0-alpha.7):
     - ALCameraViewController (~> 3.0)
     - CTAssetsPickerController (~> 3.3.1)
-    - JSQMessagesViewController-Skygear (= 7.3.5.1)
+    - JSQMessagesViewController-Skygear (= 7.3.5.3)
     - JSQSystemSoundPlayer (~> 2.0.1)
     - LruCache (~> 0.1)
-    - SKPhotoBrowser (~> 5.0)
+    - SKPhotoBrowser (~> 5.0.5)
     - SKYKit/Core (~> 1.3.1)
     - SKYKitChat/Core
     - SVProgressHUD (~> 2.1.0)
@@ -58,18 +58,18 @@ SPEC CHECKSUMS:
   CTAssetsPickerController: b1d1d50ab87cf6b8b13531de5f4530482e7e53ed
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   FMDB: 854a0341b4726e53276f2a8996f06f1b80f9259a
-  JSQMessagesViewController-Skygear: e8ecd2ad71279724afc10e14d894657877fd5a57
+  JSQMessagesViewController-Skygear: e0ae908063ad3148a8ba077b20cd20b9cb1ba3af
   JSQSystemSoundPlayer: c5850e77a4363ffd374cd851154b9af93264ed8d
   LruCache: 3a1a9dbed4db352c980bc1ad956e3046bce32515
   MagicKit-Skygear: ca78735168eb8ae24be2307af462e632278bced0
   PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
   Realm: 6f23fd1f178a09342eac21bfa7c2bf4312a7a180
-  SKPhotoBrowser: 6de77f7004442e79059f19d86e2e7e6a03b43a13
+  SKPhotoBrowser: 84235d73342a0f561d6b52ad9a9e09a8f10689d6
   SKYKit: 49a6bd447246b3a2d0a5f78127a1429476c48ccf
-  SKYKitChat: 504ae8fc3c139468dfccfaa3e47c0709d406c35c
+  SKYKitChat: 6bce897aab1ce5dcbaeaf31142a0ac0e1bd6374e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
 
-PODFILE CHECKSUM: 8622faca4bd64c447e089691cca432fe1606bdb0
+PODFILE CHECKSUM: 2081556bae6762dd3086821157ee871bea746356
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.3.1

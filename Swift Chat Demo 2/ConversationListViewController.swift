@@ -89,7 +89,7 @@ class ConversationListViewController: UIViewController {
         let updatedConversationIndex = self.conversations?.index(where: { (item) -> Bool in
             item.recordName() == conversation.recordName()
         })
-        if var conversations = self.conversations, let updatedConversationIndex = updatedConversationIndex {
+        if let updatedConversationIndex = updatedConversationIndex {
             self.conversations?.remove(at: updatedConversationIndex)
             self.conversations?.insert(conversation, at: 0)
             self.conversationlistTableView.reloadData()
@@ -116,7 +116,7 @@ class ConversationListViewController: UIViewController {
     
     func conversationLastUpdateDateString(conversation: SKYConversation) -> String {
         let dateFormatter = DateFormatter()
-        if let modificationDate = conversation.lastMessage?.creationDate() {
+        if let modificationDate = conversation.lastMessage?.creationDate {
             let dateBetweenModificationDateNow = Date().since(modificationDate, in: .day)
             if dateBetweenModificationDateNow >= 7 {
                 dateFormatter.dateFormat = "dd/MM/yyyy"
