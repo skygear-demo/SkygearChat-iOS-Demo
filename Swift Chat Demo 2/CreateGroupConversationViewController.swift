@@ -33,7 +33,8 @@ class CreateGroupConversationViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    @IBAction func donePressed(_ sender: UIBarButtonItem) {
+    @IBAction func donePressed(_ btn: UIBarButtonItem) {
+        SVProgressHUD.show()
         if conversationNameTextField.text?.count == 0 {
             SVProgressHUD.showError(withStatus: "Please enter a conversation name.")
             SVProgressHUD.dismiss(withDelay: 1)
@@ -42,16 +43,23 @@ class CreateGroupConversationViewController: UIViewController {
             for user in selectedUsers {
                 participantsIDs.append(user.recordID.recordName)
             }
-            SKYContainer.default().chatExtension?.createConversation(participantIDs: participantsIDs, title: self.conversationNameTextField.text, metadata: nil, completion: { (conversation, error) in
-                if let error = error {
-                    SVProgressHUD.showError(withStatus: "Error when create conversation")
-                    SVProgressHUD.dismiss(withDelay: 1)
-                    print(error)
-                    return
-                }
-                self.delegate?.userlistViewController(didFinish: conversation!)
-                self.dismiss(animated: true)
-            })
+
+            btn.isEnabled = false
+            SKYContainer.default().chatExtension?.createConversation(
+                participantIDs: participantsIDs,
+                title: self.conversationNameTextField.text,
+                metadata: nil,
+                completion: {(conversation, error) in
+                    btn.isEnabled = true
+                    if let error = error {
+                        SVProgressHUD.showError(withStatus: "Error when create conversation")
+                        SVProgressHUD.dismiss(withDelay: 1)
+                        print(error)
+                        return
+                    }
+                    self.delegate?.userlistViewController(didFinish: conversation!)
+                    self.dismiss(animated: true)
+                })
         }
     }
 }
