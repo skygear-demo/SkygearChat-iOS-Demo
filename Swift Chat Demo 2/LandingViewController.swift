@@ -9,11 +9,11 @@
 import UIKit
 import SKYKit
 
-let RegisterSegueIdentifier:String = "Register"
-let LoggedInSegueIdentifier:String = "MainScreen"
+let RegisterSegueIdentifier: String = "Register"
+let LoggedInSegueIdentifier: String = "MainScreen"
 
 class LandingViewController: UIViewController {
-    
+
     @IBOutlet weak var logoImageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +27,11 @@ class LandingViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+
     func navigateToNextPage() {
         if SKYContainer.default().auth.currentUser == nil {
             self.performSegue(withIdentifier: RegisterSegueIdentifier, sender: self)
-        }else {
+        } else {
             self.performSegue(withIdentifier: LoggedInSegueIdentifier, sender: self)
         }
     }

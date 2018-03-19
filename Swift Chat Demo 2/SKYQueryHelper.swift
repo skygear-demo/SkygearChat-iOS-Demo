@@ -10,7 +10,7 @@ import SKYKit
 import SVProgressHUD
 
 class SKYQueryHelper: NSObject {
-    static func performQuery(query: SKYQuery, completionBlock: @escaping ([SKYRecord])->Void) {
+    static func performQuery(query: SKYQuery, completionBlock: @escaping ([SKYRecord]) -> Void) {
         SVProgressHUD.show()
         SKYContainer.default().publicCloudDatabase.perform(query) { (results, error) in
             if let error = error as NSError? {

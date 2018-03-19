@@ -1,4 +1,3 @@
-
 //  SettingUserInfoTableViewCell.swift
 //  Swift Chat Demo 2
 //
@@ -12,7 +11,7 @@ class SettingUserInfoTableViewCell: UITableViewCell {
 
     @IBOutlet weak var userImageView: UIImageView!
     @IBOutlet weak var usernameTextField: UITextField!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

@@ -13,20 +13,19 @@ import SVProgressHUD
 import AFDateHelper
 import DZNEmptyDataSet
 
-
-let ConversationCellIdentifier:String = "Conversation"
-let ConversationViewSegueIdentifier:String = "ConversationView"
-let UserListSegueIdentifier:String = "NewMessage"
+let ConversationCellIdentifier: String = "Conversation"
+let ConversationViewSegueIdentifier: String = "ConversationView"
+let UserListSegueIdentifier: String = "NewMessage"
 
 class ConversationListViewController: UIViewController {
 
     @IBOutlet weak var conversationlistTableView: UITableView!
     @IBOutlet weak var conversationSearchBar: UISearchBar!
 
-    var refreshControl:UIRefreshControl!
-    var selectedConversation:SKYConversation? = nil
-    var conversations:[SKYConversation]? = nil
-    var cachedConversations:[SKYConversation]? = nil
+    var refreshControl: UIRefreshControl!
+    var selectedConversation: SKYConversation?
+    var conversations: [SKYConversation]?
+    var cachedConversations: [SKYConversation]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +33,7 @@ class ConversationListViewController: UIViewController {
         self.refreshControl.isHidden = false
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.refreshControl?.addTarget(self, action: #selector(handleRefresh), for: UIControlEvents.valueChanged)
-        self.conversationlistTableView.addSubview(refreshControl);
+        self.conversationlistTableView.addSubview(refreshControl)
         self.refreshControl.beginRefreshing()
         self.handleRefresh(refreshControl: self.refreshControl)
         self.conversationlistTableView.emptyDataSetDelegate = self
@@ -66,7 +65,7 @@ class ConversationListViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+
     @objc func handleRefresh(refreshControl: UIRefreshControl) {
         SVProgressHUD.show()
         self.fetchConversations(successBlock: {
@@ -76,15 +75,15 @@ class ConversationListViewController: UIViewController {
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
     }
-    
-    func fetchConversation(conversation: SKYConversation, successBlock: @escaping (()->Void), failureBlock: @escaping ((Error)->Void)) {
+
+    func fetchConversation(conversation: SKYConversation, successBlock: @escaping (() -> Void), failureBlock: @escaping ((Error) -> Void)) {
         SKYContainer.default().chatExtension?.fetchConversation(conversationID: conversation.recordID().recordName, fetchLastMessage: true, completion: { (conversation, error) in
             if let conversation = conversation {
                 self.updateConversation(conversation: conversation)
             }
         })
     }
-    
+
     func updateConversation(conversation: SKYConversation) {
         let updatedConversationIndex = self.conversations?.index(where: { (item) -> Bool in
             item.recordName() == conversation.recordName()
@@ -95,8 +94,8 @@ class ConversationListViewController: UIViewController {
             self.conversationlistTableView.reloadData()
         }
     }
-    
-    func fetchConversations(successBlock: @escaping (()->Void), failureBlock: @escaping ((Error)->Void)) {
+
+    func fetchConversations(successBlock: @escaping (() -> Void), failureBlock: @escaping ((Error) -> Void)) {
         SKYContainer.default().chatExtension?.fetchConversations(completion: { (conversations, error) in
             SVProgressHUD.dismiss()
             if let error = error {
@@ -110,34 +109,34 @@ class ConversationListViewController: UIViewController {
             successBlock()
         })
     }
-    
+
     func resetConversationList() {
         self.conversations = self.cachedConversations
         self.conversationlistTableView.reloadData()
     }
-    
+
     func conversationLastUpdateDateString(conversation: SKYConversation) -> String {
         let dateFormatter = DateFormatter()
         if let modificationDate = conversation.lastMessage?.creationDate() {
             let dateBetweenModificationDateNow = Date().since(modificationDate, in: .day)
             if dateBetweenModificationDateNow >= 7 {
                 dateFormatter.dateFormat = "dd/MM/yyyy"
-            }else if dateBetweenModificationDateNow < 7 && dateBetweenModificationDateNow >= 1 {
+            } else if dateBetweenModificationDateNow < 7 && dateBetweenModificationDateNow >= 1 {
                 dateFormatter.dateFormat = "EEEE"
-            }else if dateBetweenModificationDateNow < 1 {
+            } else if dateBetweenModificationDateNow < 1 {
                 dateFormatter.dateFormat = "HH:mm"
             }
             return dateFormatter.string(from: modificationDate)
-        }else {
+        } else {
             return ""
         }
     }
-    
+
     func subscribeUserChannel() {
-        
+
         self.unsubscribeUserChannel()
         SKYContainer.default().chatExtension?.subscribeToUserChannelWithCompletion(completion: nil)
-        
+
         NotificationCenter.default.addObserver(forName: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil, queue: OperationQueue.main) { (notification) in
             if let r = notification.userInfo?["recordChange"] {
                 let recordChange = r as! SKYChatRecordChange
@@ -164,12 +163,12 @@ class ConversationListViewController: UIViewController {
             }
         }
     }
-    
+
     func unsubscribeUserChannel() {
         SKYContainer.default().chatExtension?.unsubscribeFromUserChannel()
         NotificationCenter.default.removeObserver(self, name: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil)
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == UserListSegueIdentifier {
             let destinationNavigationController = segue.destination as! UINavigationController
@@ -183,7 +182,7 @@ extension ConversationListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 85
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         self.selectedConversation = self.conversations?[indexPath.row]
@@ -192,11 +191,11 @@ extension ConversationListViewController: UITableViewDelegate {
         vc.conversation = self.selectedConversation
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
+
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             if let selectedConversation = self.conversations?[indexPath.row] {
@@ -223,16 +222,17 @@ extension ConversationListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let conversations = conversations {
             return conversations.count
-        }else {
+        } else {
             return 0
         }
     }
-    
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let conversationCell = tableView.dequeueReusableCell(withIdentifier: ConversationCellIdentifier) as! ConversationListTableViewCell
         if let conversations = conversations {
             let conversation = conversations[indexPath.row]
-            
+
             let conversationTitle = conversation.title ?? ""
             let conversationInitials = Utilities.getInitials(withString: conversationTitle)
             let avatar = Utilities.avatarImage(withString: conversationInitials, color: Utilities.avatarColor(number: indexPath.row % 4), diameter: 50)
@@ -249,19 +249,19 @@ extension ConversationListViewController: UITableViewDataSource {
             conversationCell.avatarImageView.image = avatar
             conversationCell.messageLabel.text = lastMessageDisplay
             conversationCell.lastMessageTimeLabel.text = conversationLastUpdateDateString(conversation: conversation)
-            
+
             if conversation.participantIds.count == 2 {
-                var conversationTarget:String = ""
+                var conversationTarget: String = ""
                 if conversation.participantIds[0] == SKYContainer.default().auth.currentUser?.recordID.recordName {
                     conversationTarget = conversation.participantIds[1]
-                }else {
+                } else {
                     conversationTarget = conversation.participantIds[0]
                 }
-                
+
                 let targetUser = ChatHelper.shared.userRecord(userID: conversationTarget)
                 if let targetUser = targetUser {
                     conversationCell.conversationNameLabel.text = targetUser["username"] as? String
-                }else {
+                } else {
                     ChatHelper.shared.fetchUserRecords(userIDs: [conversationTarget], completion: { (results, error) in
                         if let error = error {
                             Utilities.handleQueryError(error: error as NSError)
@@ -269,24 +269,24 @@ extension ConversationListViewController: UITableViewDataSource {
                         }
                         if let results = results {
                             if results.count > 0 {
-                                let fetchedUser:SKYRecord = results[0]
+                                let fetchedUser: SKYRecord = results[0]
                                 conversationCell.conversationNameLabel.text = fetchedUser["username"] as? String
                             }
                         }
                     })
                 }
-            }else {
+            } else {
                 conversationCell.conversationNameLabel.text = conversationTitle
             }
-            
+
             if conversation.unreadCount > 0 {
                 conversationCell.unreadCountLabel.text = "\(conversation.unreadCount)"
                 conversationCell.unreadCountLabel.isHidden = false
-            }else {
+            } else {
                 conversationCell.unreadCountLabel.isHidden = true
             }
         }
-        
+
         return conversationCell
     }
 }
@@ -300,21 +300,21 @@ extension ConversationListViewController: UISearchBarDelegate {
         self.conversations = self.cachedConversations?.filter({ (conversation) -> Bool in
             if let title = conversation.title {
                 return title.lowercased().contains(searchText.lowercased())
-            }else {
+            } else {
                 return false
             }
         })
         self.conversationlistTableView.reloadData()
     }
-    
+
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = true
     }
-    
+
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchBar.showsCancelButton = false
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         searchBar.text = ""
@@ -335,19 +335,19 @@ extension ConversationListViewController: DZNEmptyDataSetSource, DZNEmptyDataSet
     func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
         return UIImage(named: "icon-conversation")
     }
-    
+
     func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let title = NSAttributedString(string: "No Conversations")
         return title
     }
-    
+
     func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
         let font = UIFont.systemFont(ofSize: 12)
-        let attrsDictionary = [NSAttributedStringKey.font:font]
+        let attrsDictionary = [NSAttributedStringKey.font: font]
         let description = NSAttributedString(string: "You don't have any conversations at this moment. Create one now! Click the button on the upper right hand corner.", attributes: attrsDictionary)
         return description
     }
-    
+
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
         if let navigationBar = navigationController?.navigationBar {
             return -navigationBar.frame.height * 0.75
