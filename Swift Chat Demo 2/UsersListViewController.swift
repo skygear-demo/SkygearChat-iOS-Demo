@@ -49,7 +49,7 @@ class UsersListViewController: UIViewController {
             }else if selectedRow.count == 1 && self.selectedUsers.count > 0{
                 let selectedUser:SKYRecord = self.selectedUsers[0]
                 SVProgressHUD.show()
-                SKYContainer.default().chatExtension?.createDirectConversation(participantID: selectedUser.recordID.recordName, title: selectedUser["username"] as? String, metadata: nil, completion: { (conversation, error) in
+                SKYContainer.default().chatExtension?.createDirectConversation(userID: selectedUser.recordID.recordName, title: selectedUser["username"] as? String, metadata: nil, completion: { (conversation, error) in
                     SVProgressHUD.dismiss()
                     if let error = error as NSError?{
                         if let conversationId = error.userInfo["conversation_id"] as? String {

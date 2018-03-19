@@ -118,7 +118,7 @@ class ConversationListViewController: UIViewController {
     
     func conversationLastUpdateDateString(conversation: SKYConversation) -> String {
         let dateFormatter = DateFormatter()
-        if let modificationDate = conversation.lastMessage?.creationDate {
+        if let modificationDate = conversation.lastMessage?.creationDate() {
             let dateBetweenModificationDateNow = Date().since(modificationDate, in: .day)
             if dateBetweenModificationDateNow >= 7 {
                 dateFormatter.dateFormat = "dd/MM/yyyy"
