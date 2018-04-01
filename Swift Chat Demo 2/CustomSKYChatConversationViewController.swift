@@ -14,6 +14,20 @@ class CustomSKYChatConversationViewController: SKYChatConversationViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(appBecomeActiveNotification:)),
+            name: .UIApplicationDidBecomeActive,
+            object: nil)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .UIApplicationWillEnterForeground,
+            object: nil
+        )
     }
 
     override func didReceiveMemoryWarning() {
@@ -24,6 +38,11 @@ class CustomSKYChatConversationViewController: SKYChatConversationViewController
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = true
+        LaunchingConversationID = nil
+    }
+
+    @objc func handle(appBecomeActiveNotification notification:NSNotification) {
+        LaunchingConversationID = nil
     }
 }
 
