@@ -14,6 +14,7 @@ class CustomSKYChatConversationViewController: SKYChatConversationViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         self.delegate = self
+        self.showTypingIndicator = true
     }
 
     override func didReceiveMemoryWarning() {
