@@ -52,7 +52,7 @@ class RootTabBarController: UITabBarController {
             object: nil)
     }
 
-    @objc func handle(appBecomeActiveNotification notification:NSNotification) {
+    @objc func handle(appBecomeActiveNotification notification: NSNotification) {
         if LaunchingConversationID != nil {
             self.currentTab = .ConversationTab
         }

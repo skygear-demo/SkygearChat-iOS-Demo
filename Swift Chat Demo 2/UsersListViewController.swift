@@ -24,10 +24,11 @@ class UsersListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
 
-    weak var delegate: UsersListViewControllerDelegate?
     var users: [SKYRecord] = []
     var selectedUsers: [SKYRecord] = []
     var groupSelection: Bool = false
+
+    weak var delegate: UsersListViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()

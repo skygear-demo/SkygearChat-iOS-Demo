@@ -9,7 +9,7 @@ cache:
 - cocoapods
 before_install:
 - gem install --no-rdoc --no-ri 'cocoapods:1.4.0'
-- brew upgrade --force-bottle https://raw.githubusercontent.com/Homebrew/homebrew-core/6dcd3c206681f02b267e4cf3d44ec9a8ded36b40/Formula/swiftlint.rb
+- brew upgrade --force-bottle https://raw.githubusercontent.com/Homebrew/homebrew-core/103dc014034bd9dbcd66c02a3c150a01987871b6/Formula/swiftlint.rb
 - pod install --repo-update
 script:
 - sh -eo pipefail -c "xcodebuild -scheme \"Swift Chat Demo 2\" -workspace \"$WORKSPACE\" -sdk \"$SDK\" -destination \"$DESTINATION\" build | xcpretty"

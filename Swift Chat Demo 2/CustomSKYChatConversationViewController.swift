@@ -41,7 +41,7 @@ class CustomSKYChatConversationViewController: SKYChatConversationViewController
         LaunchingConversationID = nil
     }
 
-    @objc func handle(appBecomeActiveNotification notification:NSNotification) {
+    @objc func handle(appBecomeActiveNotification notification: NSNotification) {
         LaunchingConversationID = nil
     }
 }

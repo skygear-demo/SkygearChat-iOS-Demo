@@ -88,7 +88,7 @@ class ConversationListViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
-    @objc func handle(appBecomeActiveNotification notification:NSNotification) {
+    @objc func handle(appBecomeActiveNotification notification: NSNotification) {
         if let convID = LaunchingConversationID {
             LaunchingConversationID = nil
 

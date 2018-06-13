@@ -45,8 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data)
-    {
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print ("Registered for Push notifications with token: \(deviceToken.base64EncodedString())")
         self.skygear.push.registerDevice(withDeviceToken: deviceToken, completionHandler: { (deviceID, error) in
             if let err = error {
@@ -57,8 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication,
-                     didFailToRegisterForRemoteNotificationsWithError error: Error)
-    {
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
 }
@@ -66,20 +64,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
-                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void)
-    {
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void)
-    {
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.actionIdentifier != UNNotificationDismissActionIdentifier {
             let userInfo = response.notification.request.content.userInfo
             if let apsInfo = userInfo["aps"] as? [String: Any],
-                let conversationID = apsInfo["conversation_id"] as? String
-            {
+                let conversationID = apsInfo["conversation_id"] as? String {
                 print("Lucnhing to Conversation ID: \(conversationID)")
                 LaunchingConversationID = conversationID
             }
