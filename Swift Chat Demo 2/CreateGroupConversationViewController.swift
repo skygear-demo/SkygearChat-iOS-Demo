@@ -18,6 +18,7 @@ class CreateGroupConversationViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     var selectedUsers: [SKYRecord] = []
+
     weak var delegate: UsersListViewControllerDelegate?
 
     override func viewDidLoad() {

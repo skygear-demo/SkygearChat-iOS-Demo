@@ -23,47 +23,92 @@ class ConversationListViewController: UIViewController {
     @IBOutlet weak var conversationSearchBar: UISearchBar!
 
     var refreshControl: UIRefreshControl!
-    var selectedConversation: SKYConversation?
     var conversations: [SKYConversation]?
     var cachedConversations: [SKYConversation]?
 
+    var subscribedUserChannel = false
+
+    deinit {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: .UIApplicationWillEnterForeground,
+            object: nil
+        )
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.refreshControl = UIRefreshControl()
         self.refreshControl.isHidden = false
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.refreshControl?.addTarget(self, action: #selector(handleRefresh), for: UIControlEvents.valueChanged)
         self.conversationlistTableView.addSubview(refreshControl)
-        self.refreshControl.beginRefreshing()
-        self.handleRefresh(refreshControl: self.refreshControl)
+
         self.conversationlistTableView.emptyDataSetDelegate = self
         self.conversationlistTableView.emptyDataSetSource = self
+
         // For removing extra cells in the bottom of the tableView
         self.conversationlistTableView.tableFooterView = UIView()
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(appBecomeActiveNotification:)),
+            name: .UIApplicationDidBecomeActive,
+            object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.fetchConversations(successBlock: {
-            print("Fetched Conversations")
-        }) { (error) in
-            SVProgressHUD.showError(withStatus: error.localizedDescription)
+
+        if let convID = LaunchingConversationID {
+            LaunchingConversationID = nil
+            self.showConversation(byConversationID: convID)
+        } else {
+            self.fetchConversations(successBlock: {
+                // Do nothing
+            }) { (error) in
+                SVProgressHUD.showError(withStatus: error.localizedDescription)
+            }
         }
-        subscribeUserChannel()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        self.subscribeUserChannel()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        unsubscribeUserChannel()
         super.viewWillDisappear(animated)
+        self.unsubscribeUserChannel()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    @objc func handle(appBecomeActiveNotification notification: NSNotification) {
+        if let convID = LaunchingConversationID {
+            LaunchingConversationID = nil
+
+            if self.navigationController?.topViewController == self {
+                self.showConversation(byConversationID: convID)
+            } else {
+                let foundConversationVC =
+                    self.navigationController?.viewControllers.filter({ (vc) -> Bool in
+                        guard let conversationVC = vc as? SKYChatConversationViewController else {
+                            return false
+                        }
+
+                        return conversationVC.conversation?.recordName() != convID
+                    }) ?? []
+                if !foundConversationVC.isEmpty {
+                    self.navigationController?.popToViewController(self, animated: false)
+                    self.showConversation(byConversationID: convID)
+                }
+            }
+        }
     }
 
     @objc func handleRefresh(refreshControl: UIRefreshControl) {
@@ -74,6 +119,41 @@ class ConversationListViewController: UIViewController {
         }) { (error) in
             SVProgressHUD.showError(withStatus: error.localizedDescription)
         }
+    }
+
+    func showConversation(byConversationID convID: String) {
+        if let found = self.conversations?.filter({ (eachConv) -> Bool in
+            return eachConv.recordName() == convID
+        }).first {
+            self.show(conversation: found)
+            return
+        }
+
+        // not found the conversation, fetch it
+        SVProgressHUD.show()
+        SKYContainer.default().chatExtension?.fetchConversation(
+            conversationID: convID,
+            fetchLastMessage: false,
+            completion: { [weak self] (conversation, error) in
+                guard error == nil else {
+                    SVProgressHUD.showError(withStatus: error!.localizedDescription)
+                    return
+                }
+
+                guard let conv = conversation else {
+                    SVProgressHUD.showError(withStatus: "Cannot find the conversation")
+                    return
+                }
+
+                self?.show(conversation: conv)
+            }
+        )
+    }
+
+    func show(conversation: SKYConversation) {
+        let vc = CustomSKYChatConversationViewController()
+        vc.conversation = conversation
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     func fetchConversation(conversation: SKYConversation, successBlock: @escaping (() -> Void), failureBlock: @escaping ((Error) -> Void)) {
@@ -96,6 +176,9 @@ class ConversationListViewController: UIViewController {
     }
 
     func fetchConversations(successBlock: @escaping (() -> Void), failureBlock: @escaping ((Error) -> Void)) {
+        if self.conversations?.isEmpty != false {
+            SVProgressHUD.show()
+        }
         SKYContainer.default().chatExtension?.fetchConversations(completion: { (conversations, error) in
             SVProgressHUD.dismiss()
             if let error = error {
@@ -133,29 +216,23 @@ class ConversationListViewController: UIViewController {
     }
 
     func subscribeUserChannel() {
-
         self.unsubscribeUserChannel()
-        SKYContainer.default().chatExtension?.subscribeToUserChannelWithCompletion(completion: nil)
-
-        NotificationCenter.default.addObserver(forName: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil, queue: OperationQueue.main) { (notification) in
-            if let r = notification.userInfo?["recordChange"] {
-                let recordChange = r as! SKYChatRecordChange
-                if recordChange.event == .create {
-//                    Will Change to this method (update certain conversation only) when fetchConversation last message bug is fixed
-//                    let record = recordChange.record
-//                    if record.recordType == "message" {
-//                        let conversationRef = record["conversation"] as! SKYReference
-//                        let conversationRecord = SKYRecord(recordType: "conversation", name: conversationRef.recordID.recordName)
-//                        let conversation = SKYConversation(recordData: conversationRecord)
-//                        self.fetchConversation(conversation: conversation, successBlock: {
-//
-//                        }, failureBlock: { (error) in
-//
-//                        })
-//                    }
-
+        SKYContainer.default().chatExtension?.subscribeToUserChannelWithCompletion(
+            completion: { [weak self] (error) in
+                guard error == nil else {
+                    print("Failed to subscribe user channel: \(error!.localizedDescription)")
+                    return
                 }
+
+                self?.subscribedUserChannel = true
             }
+        )
+
+        NotificationCenter.default.addObserver(
+            forName: Notification.Name("SKYChatDidReceiveRecordChangeNotification"),
+            object: nil,
+            queue: OperationQueue.main
+        ) { (notification) in
             self.fetchConversations(successBlock: {
                 print("Fetched Conversations")
             }) { (error) in
@@ -165,7 +242,10 @@ class ConversationListViewController: UIViewController {
     }
 
     func unsubscribeUserChannel() {
-        SKYContainer.default().chatExtension?.unsubscribeFromUserChannel()
+        if self.subscribedUserChannel {
+            SKYContainer.default().chatExtension?.unsubscribeFromUserChannel()
+        }
+
         NotificationCenter.default.removeObserver(self, name: Notification.Name("SKYChatDidReceiveRecordChangeNotification"), object: nil)
     }
 
@@ -185,11 +265,9 @@ extension ConversationListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        self.selectedConversation = self.conversations?[indexPath.row]
-
-        let vc = CustomSKYChatConversationViewController()
-        vc.conversation = self.selectedConversation
-        self.navigationController?.pushViewController(vc, animated: true)
+        if let conv = self.conversations?[indexPath.row] {
+            self.show(conversation: conv)
+        }
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -324,10 +402,7 @@ extension ConversationListViewController: UISearchBarDelegate {
 
 extension ConversationListViewController: UsersListViewControllerDelegate {
     func userlistViewController(didFinish conversation: SKYConversation) {
-        self.selectedConversation = conversation
-        let vc = CustomSKYChatConversationViewController()
-        vc.conversation = self.selectedConversation
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.show(conversation: conversation)
     }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		604DCE26206B7A7300CD40AC /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604DCE25206B7A7300CD40AC /* RootTabBarController.swift */; };
 		80530B9FBEBD52312E586B3D /* Pods_Swift_Chat_Demo_2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A451AA6B158B450E098C0F19 /* Pods_Swift_Chat_Demo_2.framework */; };
 		B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */; };
 		B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61C19CF1F7D0BB30078D053 /* Utilities.swift */; };
@@ -33,6 +34,7 @@
 /* Begin PBXFileReference section */
 		09D3355B195F881173AD7C0F /* Pods-Swift Chat Demo 2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swift Chat Demo 2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Swift Chat Demo 2/Pods-Swift Chat Demo 2.debug.xcconfig"; sourceTree = "<group>"; };
 		26D03EB7DD24CC71FAF6D1C6 /* Pods-Swift Chat Demo 2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Swift Chat Demo 2.release.xcconfig"; path = "Pods/Target Support Files/Pods-Swift Chat Demo 2/Pods-Swift Chat Demo 2.release.xcconfig"; sourceTree = "<group>"; };
+		604DCE25206B7A7300CD40AC /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
 		9EEF20FE1FE0D64F00A9384C /* Swift Chat Demo 2 production.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "Swift Chat Demo 2 production.entitlements"; sourceTree = "<group>"; };
 		9EFC73021FD460350070C15C /* Swift Chat Demo 2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Swift Chat Demo 2.entitlements"; sourceTree = "<group>"; };
 		A451AA6B158B450E098C0F19 /* Pods_Swift_Chat_Demo_2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Swift_Chat_Demo_2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -112,27 +114,28 @@
 			children = (
 				9EEF20FE1FE0D64F00A9384C /* Swift Chat Demo 2 production.entitlements */,
 				9EFC73021FD460350070C15C /* Swift Chat Demo 2.entitlements */,
-				B62AE4D11F7907D900395EB4 /* ChatHelper.swift */,
-				B61C19CF1F7D0BB30078D053 /* Utilities.swift */,
-				B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */,
-				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
+				B62AE4CB1F7900ED00395EB4 /* Info.plist */,
 				B62AE4BF1F7900ED00395EB4 /* AppDelegate.swift */,
-				B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */,
-				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
-				B658956B1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift */,
-				B658956F1FA6F8AC003BB21B /* SettingViewController.swift */,
+				B62AE4D11F7907D900395EB4 /* ChatHelper.swift */,
+				B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */,
+				B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */,
 				B61C19D31F8141350078D053 /* CreateGroupConversationViewController.swift */,
-				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
-				B65631001F7CD7FC00A07995 /* UsersListViewController.swift */,
+				B62AE4C11F7900ED00395EB4 /* CustomSKYChatConversationViewController.swift */,
 				B6CCB39D1F7A6373009B2A7F /* LandingViewController.swift */,
 				B6CCB39B1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift */,
 				B6CCB3991F7A5502009B2A7F /* LoginRegistrationViewController.swift */,
+				604DCE25206B7A7300CD40AC /* RootTabBarController.swift */,
+				B658956B1FA6F837003BB21B /* SettingUserInfoTableViewCell.swift */,
+				B658956F1FA6F8AC003BB21B /* SettingViewController.swift */,
+				B61C19D11F7D0CC20078D053 /* SKYQueryHelper.swift */,
+				B62AE4D51F790A6200395EB4 /* SKYRecordExtension.swift */,
 				B6CCB3971F7A50AB009B2A7F /* StartupViewController.swift */,
-				B62AE4D91F7A123E00395EB4 /* ConversationListTableViewCell.swift */,
-				B62AE4D71F7A11D300395EB4 /* ConversationListViewController.swift */,
+				B61C19CD1F7CE3F60078D053 /* UsersListTableViewCell.swift */,
+				B65631001F7CD7FC00A07995 /* UsersListViewController.swift */,
+				B61C19CF1F7D0BB30078D053 /* Utilities.swift */,
 				B62AE4C61F7900ED00395EB4 /* Assets.xcassets */,
 				B62AE4C81F7900ED00395EB4 /* LaunchScreen.storyboard */,
-				B62AE4CB1F7900ED00395EB4 /* Info.plist */,
+				B62AE4C31F7900ED00395EB4 /* Main.storyboard */,
 			);
 			path = "Swift Chat Demo 2";
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CCB39C1F7A557A009B2A7F /* LoginRegistrationTableViewCell.swift in Sources */,
+				604DCE26206B7A7300CD40AC /* RootTabBarController.swift in Sources */,
 				B61C19D41F8141350078D053 /* CreateGroupConversationViewController.swift in Sources */,
 				B61C19CE1F7CE3F60078D053 /* UsersListTableViewCell.swift in Sources */,
 				B61C19D01F7D0BB30078D053 /* Utilities.swift in Sources */,
